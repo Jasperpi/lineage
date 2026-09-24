@@ -1,0 +1,7 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.env
+# never commit real genetic data
+*.kit.txt
+data/private/

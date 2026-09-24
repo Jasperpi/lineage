@@ -1,0 +1,17 @@
+{
+  "name": "@lineage/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@lineage/core": "0.1.0",
+    "@lineage/fetch": "0.1.0",
+    "@lineage/kb": "0.1.0"
+  },
+  "devDependencies": { "vite": "^8.0.0" }
+}

@@ -1,0 +1,10 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/core" },
+    { "path": "packages/kb" },
+    { "path": "packages/fetch" },
+    { "path": "packages/ai" },
+    { "path": "packages/cli" }
+  ]
+}

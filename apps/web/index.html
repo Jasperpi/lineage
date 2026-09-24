@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lineage</title>
+  <meta name="description" content="An open, verifiable framework for DNA and genealogy analysis. Everything runs in your browser; your raw file never leaves your device." />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <header class="masthead">
+    <div class="wrap">
+      <h1>Lineage</h1>
+      <p class="tagline">An open framework for reading consumer DNA files and family trees, built so that every statement it makes can be traced to a source.</p>
+      <p class="privacy"><strong>Nothing you load here is uploaded.</strong> Parsing and analysis run entirely in this browser tab. The one optional network call, building an ancestry reference panel, sends only public rsID numbers to Ensembl, never your genotypes.</p>
+      <nav class="tabs" id="tabs"></nav>
+    </div>
+  </header>
+  <main class="wrap" id="app"></main>
+  <footer class="wrap foot">
+    <p>Sources: relationship ranges from the Shared cM Project v4 (Bettinger 2020, via DNA Painter, CC BY 4.0); allele positions and 1000 Genomes frequencies from Ensembl; trait citations verified against PubMed. Sample data is synthetic. Not a medical device and not medical advice.</p>
+  </footer>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

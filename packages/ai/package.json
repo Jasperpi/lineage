@@ -1,0 +1,14 @@
+{
+  "name": "@lineage/ai",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": "./dist/index.js" },
+  "scripts": { "build": "tsc -p tsconfig.json" },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
+    "@lineage/core": "0.1.0",
+    "zod": "^4.6.0"
+  }
+}

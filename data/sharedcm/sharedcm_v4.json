@@ -1,0 +1,338 @@
+{
+ "Half_GG-Aunt_/_Uncle": {
+  "label": "Half GG-Aunt / Uncle",
+  "average": 208,
+  "min": 103,
+  "max": 284
+ },
+ "Great-Grandparent": {
+  "label": "Great-Grandparent",
+  "average": 887,
+  "min": 485,
+  "max": 1486
+ },
+ "Great-Great-Aunt_/_Uncle": {
+  "label": "Great-Great-Aunt / Uncle",
+  "average": 420,
+  "min": 186,
+  "max": 713
+ },
+ "1C3R": {
+  "label": "1C3R",
+  "average": 117,
+  "min": 25,
+  "max": 238
+ },
+ "2C3R": {
+  "label": "2C3R",
+  "average": 51,
+  "min": 0,
+  "max": 154
+ },
+ "Half_1C2R": {
+  "label": "Half 1C2R",
+  "average": 125,
+  "min": 16,
+  "max": 269
+ },
+ "Half_Great-Aunt_/_Uncle": {
+  "label": "Half Great-Aunt / Uncle",
+  "average": 431,
+  "min": 184,
+  "max": 668
+ },
+ "Grandparent": {
+  "label": "Grandparent",
+  "average": 1754,
+  "min": 984,
+  "max": 2462
+ },
+ "Great-Aunt_/_Uncle": {
+  "label": "Great-Aunt / Uncle",
+  "average": 850,
+  "min": 330,
+  "max": 1467
+ },
+ "1C2R": {
+  "label": "1C2R",
+  "average": 221,
+  "min": 33,
+  "max": 471
+ },
+ "2C2R": {
+  "label": "2C2R",
+  "average": 71,
+  "min": 0,
+  "max": 244
+ },
+ "3C2R": {
+  "label": "3C2R",
+  "average": 36,
+  "min": 0,
+  "max": 166
+ },
+ "6C": {
+  "label": "6C",
+  "average": 18,
+  "min": 0,
+  "max": 71
+ },
+ "Half_2C1R": {
+  "label": "Half 2C1R",
+  "average": 66,
+  "min": 0,
+  "max": 190
+ },
+ "Half_1C1R": {
+  "label": "Half 1C1R",
+  "average": 224,
+  "min": 62,
+  "max": 469
+ },
+ "Half_Aunt_/_Uncle": {
+  "label": "Half Aunt / Uncle",
+  "average": 871,
+  "min": 492,
+  "max": 1315
+ },
+ "Parent": {
+  "label": "Parent",
+  "average": 3485,
+  "min": 2376,
+  "max": 3720
+ },
+ "Aunt_/_Uncle": {
+  "label": "Aunt / Uncle",
+  "average": 1741,
+  "min": 1201,
+  "max": 2282
+ },
+ "1C1R": {
+  "label": "1C1R",
+  "average": 433,
+  "min": 102,
+  "max": 980
+ },
+ "2C1R": {
+  "label": "2C1R",
+  "average": 122,
+  "min": 14,
+  "max": 353
+ },
+ "3C1R": {
+  "label": "3C1R",
+  "average": 48,
+  "min": 0,
+  "max": 192
+ },
+ "4C1R": {
+  "label": "4C1R",
+  "average": 28,
+  "min": 0,
+  "max": 126
+ },
+ "6C1R": {
+  "label": "6C1R",
+  "average": 15,
+  "min": 0,
+  "max": 56
+ },
+ "Half_3C": {
+  "label": "Half 3C",
+  "average": 48,
+  "min": 0,
+  "max": 168
+ },
+ "Half_2C": {
+  "label": "Half 2C",
+  "average": 120,
+  "min": 10,
+  "max": 325
+ },
+ "Half_1C": {
+  "label": "Half 1C",
+  "average": 449,
+  "min": 156,
+  "max": 979
+ },
+ "Half_Sibling": {
+  "label": "Half Sibling",
+  "average": 1759,
+  "min": 1160,
+  "max": 2436
+ },
+ "Sibling": {
+  "label": "Sibling",
+  "average": 2613,
+  "min": 1613,
+  "max": 3488
+ },
+ "1C": {
+  "label": "1C",
+  "average": 866,
+  "min": 396,
+  "max": 1397
+ },
+ "2C": {
+  "label": "2C",
+  "average": 229,
+  "min": 41,
+  "max": 592
+ },
+ "3C": {
+  "label": "3C",
+  "average": 73,
+  "min": 0,
+  "max": 234
+ },
+ "4C": {
+  "label": "4C",
+  "average": 35,
+  "min": 0,
+  "max": 139
+ },
+ "5C": {
+  "label": "5C",
+  "average": 25,
+  "min": 0,
+  "max": 117
+ },
+ "6C2R": {
+  "label": "6C2R",
+  "average": 13,
+  "min": 0,
+  "max": 45
+ },
+ "Half_3C1R": {
+  "label": "Half 3C1R",
+  "average": 37,
+  "min": 0,
+  "max": 139
+ },
+ "Half_Niece_/_Nephew": {
+  "label": "Half Niece / Nephew",
+  "average": 871,
+  "min": 492,
+  "max": 1315
+ },
+ "Niece_/_Nephew": {
+  "label": "Niece / Nephew",
+  "average": 1740,
+  "min": 1201,
+  "max": 2282
+ },
+ "Child": {
+  "label": "Child",
+  "average": 3487,
+  "min": 3330,
+  "max": 3720
+ },
+ "5C1R": {
+  "label": "5C1R",
+  "average": 21,
+  "min": 0,
+  "max": 80
+ },
+ "7C": {
+  "label": "7C",
+  "average": 14,
+  "min": 0,
+  "max": 57
+ },
+ "Half_3C2R": {
+  "label": "Half 3C2R",
+  "average": 27,
+  "min": 0,
+  "max": 78
+ },
+ "Half_2C2R": {
+  "label": "Half 2C2R",
+  "average": 48,
+  "min": 0,
+  "max": 144
+ },
+ "Half_Great-Niece_/_Nephew": {
+  "label": "Half Great-Niece / Nephew",
+  "average": 431,
+  "min": 184,
+  "max": 668
+ },
+ "Great-Niece_/_Nephew": {
+  "label": "Great-Niece / Nephew",
+  "average": 850,
+  "min": 330,
+  "max": 1467
+ },
+ "Grandchild": {
+  "label": "Grandchild",
+  "average": 1754,
+  "min": 984,
+  "max": 2462
+ },
+ "4C2R": {
+  "label": "4C2R",
+  "average": 22,
+  "min": 0,
+  "max": 93
+ },
+ "5C2R": {
+  "label": "5C2R",
+  "average": 18,
+  "min": 0,
+  "max": 65
+ },
+ "7C1R": {
+  "label": "7C1R",
+  "average": 12,
+  "min": 0,
+  "max": 50
+ },
+ "Half_1C3R": {
+  "label": "Half 1C3R",
+  "average": 60,
+  "min": 0,
+  "max": 120
+ },
+ "Half_GG-Niece_/_Nephew": {
+  "label": "Half GG-Niece / Nephew",
+  "average": 208,
+  "min": 103,
+  "max": 284
+ },
+ "Great-Great-Niece_/_Nephew": {
+  "label": "Great-Great-Niece / Nephew",
+  "average": 420,
+  "min": 186,
+  "max": 713
+ },
+ "Great-Grandchild": {
+  "label": "Great-Grandchild",
+  "average": 887,
+  "min": 485,
+  "max": 1486
+ },
+ "3C3R": {
+  "label": "3C3R",
+  "average": 27,
+  "min": 0,
+  "max": 98
+ },
+ "4C3R": {
+  "label": "4C3R",
+  "average": 19,
+  "min": 0,
+  "max": 60
+ },
+ "5C3R": {
+  "label": "5C3R",
+  "average": 13,
+  "min": 0,
+  "max": 30
+ },
+ "8C": {
+  "label": "8C",
+  "average": 11,
+  "min": 0,
+  "max": 42
+ }
+}
