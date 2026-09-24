@@ -3,5 +3,13 @@
   "installCommand": "cd ../.. && npm ci",
   "buildCommand": "cd ../.. && npx tsc -b packages/core packages/kb packages/fetch && cd apps/web && npx vite build",
   "outputDirectory": "dist",
-  "cleanUrls": true
+  "cleanUrls": true,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Content-Security-Policy", "value": "frame-ancestors 'self' https://jaspermeller.com https://*.jaspermeller.com" }
+      ]
+    }
+  ]
 }

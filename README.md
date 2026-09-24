@@ -59,7 +59,7 @@ npm run web                   # http://localhost:5173
 
 ## Deploying the web app
 
-The portfolio's root `vercel.json` builds Lineage as part of the site: it installs the workspace, builds the core packages, and writes the Vite build to `public/lineage`, so the app is served at `jaspermeller.com/lineage` with no separate project. `apps/web/vercel.json` remains for deploying the app on its own (set Root Directory to `lineage/apps/web`), for example on a subdomain.
+Lineage deploys as its own Vercel project, `web`, whose Root Directory is `lineage/apps/web`; `apps/web/vercel.json` there installs the workspace from the repo root, builds the core packages, and builds the site. Its address is `lineage.jaspermeller.com`. The portfolio site redirects `/lineage` to it.
 
 ## Library use
 
