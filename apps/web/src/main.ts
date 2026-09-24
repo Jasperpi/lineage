@@ -56,7 +56,7 @@ function dropZone(label: string, accept: string, onText: (text: string, name: st
   zone.addEventListener("drop", (e) => { e.preventDefault(); zone.classList.remove("over"); const f = e.dataTransfer?.files[0]; if (f) f.text().then((t) => onText(t, f.name)); });
   return zone;
 }
-async function sample(path: string): Promise<string> { const r = await fetch(`/samples/${path}`); if (!r.ok) throw new Error(`Could not load sample ${path}`); return r.text(); }
+async function sample(path: string): Promise<string> { const r = await fetch(`samples/${path}`); if (!r.ok) throw new Error(`Could not load sample ${path}`); return r.text(); }
 function table(headers: Array<[string, boolean?]>, rows: Array<Array<string | Node>>, numericCols: number[] = []): HTMLElement {
   return h("table", {},
     h("thead", {}, h("tr", {}, ...headers.map(([t], i) => h("th", { class: numericCols.includes(i) ? "num" : "" }, t)))),
