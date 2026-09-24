@@ -57,6 +57,10 @@ node packages/cli/dist/index.js narrate report.json --md report.md
 npm run web                   # http://localhost:5173
 ```
 
+## Deploying the web app
+
+`apps/web/vercel.json` carries the install and build commands. In Vercel, create a project from this repository with **Root Directory** set to `lineage/apps/web`; the config installs the workspace from the repo root, builds the core packages, then builds the site. A subdomain such as `lineage.jaspermeller.com` matches how the other site entries are served.
+
 ## Library use
 
 ```ts

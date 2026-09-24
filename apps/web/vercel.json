@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "cd ../.. && npm ci",
+  "buildCommand": "cd ../.. && npx tsc -b packages/core packages/kb packages/fetch && cd apps/web && npx vite build",
+  "outputDirectory": "dist",
+  "cleanUrls": true
+}
