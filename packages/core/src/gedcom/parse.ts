@@ -191,19 +191,19 @@ export interface FoundRelationship {
 
 /**
  * Discover how two individuals are related through blood. Only the NEAREST
- * common ancestors count as relationship paths: an ancestor whose own parents
- * are also common ancestors is skipped (otherwise every cousin would also be a
- * "distant cousin" through each grandparent of the shared couple).
+ * common ancestors count as relationship paths: a common ancestor who is also
+ * an ancestor of another common ancestor is skipped (otherwise first cousins
+ * would also be counted as second cousins through each parent of their shared
+ * grandparents). Every ancestor on the way down from one common ancestor to
+ * another is itself common, so "has a child among the common ancestors" is
+ * exactly "is an ancestor of another common ancestor".
  */
 export function findRelationship(file: GedcomFile, aId: string, bId: string): FoundRelationship | undefined {
   const da = ancestorDepths(file, aId), db = ancestorDepths(file, bId);
   const common = [...da.keys()].filter((id) => db.has(id));
   if (common.length === 0) return undefined;
   const commonSet = new Set(common);
-  const nearest = common.filter((id) => {
-    const { father, mother } = parentsOf(file, id);
-    return !((father && commonSet.has(father)) && (mother && commonSet.has(mother)) || (father && commonSet.has(father) && !mother) || (mother && commonSet.has(mother) && !father));
-  });
+  const nearest = common.filter((id) => !childrenOfPerson(file, id).some((c) => commonSet.has(c)));
   const paths: AncestryPath[] = [];
   for (const anc of nearest) {
     for (const ua of da.get(anc)!) for (const ub of db.get(anc)!) {

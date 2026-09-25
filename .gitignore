@@ -5,3 +5,5 @@ dist/
 # never commit real genetic data
 *.kit.txt
 data/private/
+# Pipeline downloads and intermediate tables (large; rebuilt by scripts/data)
+data/.cache/

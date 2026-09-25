@@ -385,6 +385,20 @@ describe("GEDCOM", () => {
     expect(r.math.expectedHalfIdenticalFraction).toBeCloseTo(0.25);
   });
 
+  it("counts only the nearest common ancestors when the shared grandparents' own parents are in the tree", () => {
+    // Regression: with great-grandparents recorded, first cousins were reported as second cousins.
+    const deeper = parseGedcom(GED.replace("0 TRLR", [
+      "0 @G1@ INDI", "1 NAME Old /Smith/", "1 SEX M", "1 FAMS @GF@",
+      "0 @G2@ INDI", "1 NAME Older /Smith/", "1 SEX F", "1 FAMS @GF@",
+      "0 @GF@ FAM", "1 HUSB @G1@", "1 WIFE @G2@", "1 CHIL @I1@",
+      "0 TRLR"].join("\n")).replace(/0 @I1@ INDI\n/, "0 @I1@ INDI\n1 FAMC @GF@\n"));
+    expect(deeper.warnings).toEqual([]);
+    const r = findRelationship(deeper, "@I6@", "@I8@")!;
+    expect(r.description).toBe("first cousin");
+    expect(r.commonAncestors.sort()).toEqual(["@I1@", "@I2@"]);
+    expect(r.math.coefficientOfRelationship).toBe(0.125);
+  });
+
   it("finds lineal and sibling relationships with sexed names", () => {
     expect(findRelationship(file, "@I6@", "@I1@")!.description).toBe("grandfather");
     expect(findRelationship(file, "@I1@", "@I6@")!.description).toBe("grandson");

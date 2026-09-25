@@ -9,9 +9,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/public-sans": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/instrument-serif": "^5.3.0",
     "@lineage/core": "0.1.0",
     "@lineage/fetch": "0.1.0",
-    "@lineage/kb": "0.1.0"
+    "@lineage/kb": "0.1.0",
+    "d3-geo": "^3.1.1",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
   },
-  "devDependencies": { "vite": "^8.0.0" }
+  "devDependencies": {
+    "@types/d3-geo": "^3.1.1",
+    "@types/topojson-client": "^3.1.5",
+    "@types/topojson-specification": "^1.0.5",
+    "vite": "^8.0.0"
+  }
 }

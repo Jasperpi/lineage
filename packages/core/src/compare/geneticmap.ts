@@ -16,6 +16,8 @@ export interface GeneticMap {
   cM(chrom: Chrom, pos: number): number | undefined;
   /** Total mapped length in cM for a chromosome. */
   length(chrom: Chrom): number | undefined;
+  /** Inverse lookup, base pairs at a genetic position, when the map supports it. */
+  bp?(chrom: Chrom, cm: number): number | undefined;
   chromosomes(): Chrom[];
 }
 
@@ -47,6 +49,22 @@ export class InterpolatedGeneticMap implements GeneticMap {
     return p1 === p0 ? c0 : c0 + ((p - p0) / (p1 - p0)) * (c1 - c0);
   }
 
+  /** Inverse lookup: the base-pair position at a genetic position (linear between map points). */
+  bp(chrom: Chrom, cm: number): number | undefined {
+    const m = this.maps.get(chrom);
+    if (!m || m.cm.length === 0) return undefined;
+    const n = m.cm.length;
+    if (cm <= m.cm[0]!) return m.pos[0]!;
+    if (cm >= m.cm[n - 1]!) return m.pos[n - 1]!;
+    let lo = 0, hi = n - 1;
+    while (hi - lo > 1) {
+      const mid = (lo + hi) >> 1;
+      if (m.cm[mid]! <= cm) lo = mid; else hi = mid;
+    }
+    const c0 = m.cm[lo]!, c1 = m.cm[hi]!, p0 = m.pos[lo]!, p1 = m.pos[hi]!;
+    return Math.round(c1 === c0 ? p0 : p0 + ((cm - c0) / (c1 - c0)) * (p1 - p0));
+  }
+
   length(chrom: Chrom): number | undefined {
     const m = this.maps.get(chrom);
     return m && m.cm.length ? m.cm[m.cm.length - 1]! - m.cm[0]! : undefined;
@@ -70,5 +88,25 @@ export function parseHapMapGeneticMap(text: string, into = new InterpolatedGenet
     b.push([pos, cm]);
   }
   for (const [c, pts] of buckets) into.add(c, pts);
+  return into;
+}
+
+/** The compact map format written by scripts/data/01-genetic-map.mjs (delta-encoded positions and cM x 10^4). */
+export interface CompactGeneticMap {
+  build: number;
+  lengthsCm: Record<string, number>;
+  autosomalLengthCm: number;
+  chromosomes: Record<string, { pos: number[]; cm: number[] }>;
+}
+
+export function geneticMapFromCompact(json: CompactGeneticMap, into = new InterpolatedGeneticMap()): InterpolatedGeneticMap {
+  for (const [name, { pos, cm }] of Object.entries(json.chromosomes)) {
+    const chrom = normaliseChrom(name);
+    if (!chrom) continue;
+    const points: Array<[number, number]> = new Array(pos.length);
+    let p = 0, c = 0;
+    for (let i = 0; i < pos.length; i++) { p += pos[i]!; c += cm[i]!; points[i] = [p, c / 1e4]; }
+    into.add(chrom, points);
+  }
   return into;
 }
