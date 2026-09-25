@@ -110,6 +110,17 @@ describe("ancestry analyses", () => {
     expect(p.proportions[0]).toBeGreaterThan(0.95);
   });
 
+  it("keeps every estimate inside its own interval, including components at zero", () => {
+    // A property real genomes once broke: bootstrap replicates that stopped short of convergence
+    // gave a British genome 99.9% European with an "interval" of 98.6-99.3%.
+    const p = componentAdmixture(panel, pure0, { replicates: 20 });
+    p.proportions.forEach((x, k) => {
+      expect(p.ci95[k]![0]).toBeLessThanOrEqual(x + 1e-3);
+      expect(p.ci95[k]![1]).toBeGreaterThanOrEqual(x - 1e-3);
+    });
+    expect(p.proportions.reduce((a, b) => a + b, 0)).toBeCloseTo(1, 9);
+  });
+
   it("projects genomes to opposite sides of a PC that separates two components", () => {
     const pc0 = projectPca(panel, pure0).pcs[0]!;
     const pc1 = projectPca(panel, panelGenotypes(person(3, () => 1, () => 1), panel)).pcs[0]!;

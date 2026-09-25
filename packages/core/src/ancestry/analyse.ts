@@ -76,27 +76,61 @@ export interface ComponentAdmixture {
   snpsUsed: number;
   iterations: number;
   logLik: number;
+  replicates: number;
 }
 
-function emFixedF(dos: Int8Array, F: Float64Array, K: number, idx: ArrayLike<number>, maxIter: number, tol: number): { q: number[]; ll: number; it: number } {
-  let q = new Array<number>(K).fill(1 / K);
-  let prev = -Infinity, ll = -Infinity, it = 0;
+/**
+ * Ancestry proportions with the component frequencies fixed (ADMIXTURE's projection), by EM
+ * accelerated with SQUAREM (Varadhan & Roland 2008, scheme S3). Plain EM crawls towards
+ * proportions of zero, which is where most components of most people belong; the extrapolation
+ * gets there in tens of passes instead of thousands. Stops when no proportion moves by more than
+ * `qTol` in a cycle or the log-likelihood gains less than `tol` of itself, or after `maxPasses`.
+ */
+function emFixedF(dos: Int8Array, F: Float64Array, K: number, idx: ArrayLike<number>, maxPasses: number, tol: number, qTol: number, start?: number[]): { q: number[]; ll: number; it: number } {
   const n = idx.length;
-  for (it = 0; it < maxIter; it++) {
+  const simplex = (v: number[]) => { const c = v.map((x) => Math.max(1e-12, x)); const sum = c.reduce((a, b) => a + b, 0); return c.map((x) => x / sum); };
+  /** One EM update; returns the new proportions and (when asked) the log-likelihood at the input. */
+  const step = (q: number[], withLl = true): { q: number[]; ll: number } => {
     const acc = new Float64Array(K);
-    ll = 0;
+    let ll = 0;
     for (let t = 0; t < n; t++) {
       const j = idx[t]!, gA = dos[j]!, gB = 2 - gA, base = j * K;
       let p = 0;
       for (let k = 0; k < K; k++) p += q[k]! * F[base + k]!;
-      ll += gA * Math.log(p) + gB * Math.log(1 - p);
-      for (let k = 0; k < K; k++) acc[k]! += (gA * q[k]! * F[base + k]!) / p + (gB * q[k]! * (1 - F[base + k]!)) / (1 - p);
+      if (withLl) ll += gA * Math.log(p) + gB * Math.log(1 - p);
+      const a = gA / p, b = gB / (1 - p);
+      for (let k = 0; k < K; k++) { const f = F[base + k]!; acc[k]! += a * f + b * (1 - f); }
     }
-    q = Array.from(acc, (a) => a / (2 * n));
-    if (Math.abs(ll - prev) < tol) break;
+    return { q: Array.from(acc, (x, k) => (q[k]! * x) / (2 * n)), ll };
+  };
+  let q = start ? simplex(start) : new Array<number>(K).fill(1 / K);
+  let ll = -Infinity, prev = -Infinity, passes = 0;
+  while (passes < maxPasses) {
+    const s1 = step(q, false), s2 = step(s1.q);
+    passes += 2;
+    const r = s1.q.map((x, k) => x - q[k]!), v = s2.q.map((x, k) => x - s1.q[k]! - r[k]!);
+    const rn = Math.hypot(...r), vn = Math.hypot(...v);
+    let next = s2.q;
+    ll = s2.ll;
+    // Shorten the step until no proportion shrinks more than tenfold: EM's updates are
+    // multiplicative, so a component thrown to nearly zero could never climb back.
+    let alpha = vn > 0 ? Math.min(-1, -rn / vn) : -1, qp: number[] | undefined;
+    for (let tries = 0; tries < 10 && alpha < -1.01; tries++, alpha = (alpha - 1) / 2) {
+      const cand = q.map((x, k) => x - 2 * alpha * r[k]! + alpha * alpha * v[k]!);
+      if (cand.every((x, k) => x >= q[k]! / 10)) { qp = simplex(cand); break; }
+    }
+    if (qp) {
+      const s3 = step(qp);
+      passes++;
+      // Keep the extrapolated point only if it is at least as likely as one plain step.
+      if (s3.ll >= s2.ll) { next = s3.q; ll = s3.ll; }
+    }
+    const dq = Math.max(...next.map((x, k) => Math.abs(x - q[k]!)));
+    q = next;
+    if (dq < qTol || Math.abs(ll - prev) < tol * Math.max(1, Math.abs(ll))) break;
     prev = ll;
   }
-  return { q, ll, it: it + 1 };
+  return { q, ll, it: passes };
 }
 
 export function componentAdmixture(panel: ReferencePanelData, g: PanelGenotypes, opts: { replicates?: number; block?: number; seed?: number } = {}): ComponentAdmixture {
@@ -113,9 +147,9 @@ export function componentAdmixture(panel: ReferencePanelData, g: PanelGenotypes,
   });
   const all = Array.from({ length: used.length }, (_, t) => t);
   const components = panel.header.components.map((c) => c.id);
-  if (used.length === 0) return { components, proportions: new Array(K).fill(NaN), ci95: new Array(K).fill([NaN, NaN]), snpsUsed: 0, iterations: 0, logLik: NaN };
-  const main = emFixedF(dos, F, K, all, 1000, 1e-8);
-  const reps = opts.replicates ?? 100, block = opts.block ?? 50;
+  if (used.length === 0) return { components, proportions: new Array(K).fill(NaN), ci95: new Array(K).fill([NaN, NaN]), snpsUsed: 0, iterations: 0, logLik: NaN, replicates: 0 };
+  const main = emFixedF(dos, F, K, all, 3000, 1e-12, 1e-7);
+  const reps = opts.replicates ?? 60, block = opts.block ?? 50;
   const rng = mulberry32(opts.seed ?? 7);
   const nBlocks = Math.ceil(used.length / block);
   const samples: number[][] = [];
@@ -125,13 +159,15 @@ export function componentAdmixture(panel: ReferencePanelData, g: PanelGenotypes,
       const start = Math.floor(rng() * nBlocks) * block;
       for (let t = start; t < Math.min(start + block, used.length); t++) idx.push(t);
     }
-    samples.push(emFixedF(dos, F, K, idx, 300, 1e-6).q);
+    // Start each replicate at the full-data estimate, with every component at least 0.001 so one
+    // the resample supports can still grow; intervals are shown to 0.1%, so 1e-5 is converged.
+    samples.push(emFixedF(dos, F, K, idx, 1500, 1e-11, 1e-4, main.q.map((x) => Math.max(x, 1e-3))).q);
   }
   const ci95 = components.map((_, k) => {
     const col = samples.map((s) => s[k]!).sort((a, b) => a - b);
     return [col[Math.floor(0.025 * (col.length - 1))]!, col[Math.ceil(0.975 * (col.length - 1))]!] as [number, number];
   });
-  return { components, proportions: main.q, ci95, snpsUsed: used.length, iterations: main.it, logLik: main.ll };
+  return { components, proportions: main.q, ci95, snpsUsed: used.length, iterations: main.it, logLik: main.ll, replicates: reps };
 }
 
 /* ------------------------------------------------------------------ */

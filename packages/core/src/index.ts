@@ -5,6 +5,7 @@ export * from "./util/random.js";
 export * from "./kit/kit.js";
 export * from "./kit/stats.js";
 export * from "./raw/parse.js";
+export * from "./raw/archive.js";
 export * from "./compare/geneticmap.js";
 export * from "./compare/hir.js";
 export * from "./segments/parse.js";

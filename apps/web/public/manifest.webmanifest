@@ -1,0 +1,10 @@
+{
+  "name": "Lineage",
+  "short_name": "Lineage",
+  "description": "DNA and family-tree analysis that runs in your browser, on open reference data.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f2ea",
+  "theme_color": "#1f3a93",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

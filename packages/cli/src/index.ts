@@ -17,7 +17,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import {
   parseRawKit, summariseKit, inferSex, runsOfHomozygosity, compareKits, parseHapMapGeneticMap,
   parseSegmentTable, summariseMatches, predictRelationship, parseGedcom, gedcomStats, findRelationship,
-  callTraits, estimateAdmixture, parseSimpleTree, parseIsoggSnpIndex, callHaplogroup, ReportBuilder,
+  callTraits, estimateAdmixture, openRawText, parseSimpleTree, parseIsoggSnpIndex, callHaplogroup, ReportBuilder,
   type ReferencePanel, type Kit,
 } from "@lineage/core";
 import { TRAITS } from "@lineage/kb";
@@ -31,9 +31,10 @@ function flag(name: string): string | undefined { const i = args.indexOf(`--${na
 function has(name: string): boolean { return args.includes(`--${name}`); }
 const json = has("json");
 
-function loadKit(path: string): Kit {
+/** Load a raw file; .zip archives from the vendors and .gz files are opened directly. */
+async function loadKit(path: string): Promise<Kit> {
   const t0 = Date.now();
-  const { kit, report } = parseRawKit(readFileSync(path, "utf8"));
+  const { kit, report } = parseRawKit((await openRawText(new Uint8Array(readFileSync(path)))).text);
   if (!json) console.error(`Loaded ${path}: ${report.format}, ${report.rowsKept.toLocaleString()} variants (${Date.now() - t0} ms)` + (report.rowsRead - report.rowsKept ? `, skipped ${report.rowsRead - report.rowsKept}` : ""));
   return kit;
 }
@@ -43,7 +44,7 @@ const pct = (x: number) => `${(x * 100).toFixed(1)}%`;
 async function main(): Promise<void> {
   switch (cmd) {
     case "inspect": {
-      const kit = loadKit(positional[0]!);
+      const kit = await loadKit(positional[0]!);
       const summary = summariseKit(kit), sex = inferSex(kit), roh = runsOfHomozygosity(kit);
       if (json) return out({ summary, sex, roh });
       console.log(`Format ${summary.format}, build ${summary.build}; ${summary.variants.toLocaleString()} variants, call rate ${pct(summary.callRate)}, autosomal heterozygosity ${pct(summary.autosomalHeterozygosity)}`);
@@ -53,7 +54,7 @@ async function main(): Promise<void> {
       return;
     }
     case "traits": {
-      const kit = loadKit(positional[0]!);
+      const kit = await loadKit(positional[0]!);
       const calls = callTraits(kit, TRAITS);
       if (json) return out(calls);
       for (const c of calls) {
@@ -64,7 +65,7 @@ async function main(): Promise<void> {
       return;
     }
     case "compare": {
-      const a = loadKit(positional[0]!), b = loadKit(positional[1]!);
+      const a = await loadKit(positional[0]!), b = await loadKit(positional[1]!);
       const mapPath = flag("map");
       const map = mapPath ? parseHapMapGeneticMap(readFileSync(mapPath, "utf8")) : undefined;
       const r = compareKits(a, b, { map });
@@ -106,14 +107,14 @@ async function main(): Promise<void> {
       return;
     }
     case "panel": {
-      const kit = loadKit(positional[0]!);
+      const kit = await loadKit(positional[0]!);
       const panel = await buildThousandGenomesPanel(kit, { maxSnps: Number(flag("max") ?? 4000), onProgress: (d, t) => console.error(`  fetched ${d}/${t}`) });
       writeFileSync(flag("out") ?? "panel.json", JSON.stringify(panel));
       console.error(`Panel: ${panel.snps.length} SNPs after thinning, populations ${panel.populations.join(", ")}`);
       return;
     }
     case "admixture": {
-      const kit = loadKit(positional[0]!);
+      const kit = await loadKit(positional[0]!);
       const panel = JSON.parse(readFileSync(flag("panel")!, "utf8")) as ReferencePanel;
       const r = estimateAdmixture(kit, panel);
       if (json) return out(r);
@@ -123,7 +124,7 @@ async function main(): Promise<void> {
       return;
     }
     case "haplogroup": {
-      const kit = loadKit(positional[0]!);
+      const kit = await loadKit(positional[0]!);
       const chrom = (flag("chrom") ?? "Y") as "Y" | "MT";
       const text = readFileSync(flag("tree")!, "utf8");
       const tree = has("isogg") ? parseIsoggSnpIndex(text, 37) : parseSimpleTree(text, chrom, chrom === "MT" ? "rCRS" : 37);
@@ -135,7 +136,7 @@ async function main(): Promise<void> {
       return;
     }
     case "report": {
-      const kit = loadKit(positional[0]!);
+      const kit = await loadKit(positional[0]!);
       const rb = new ReportBuilder({ label: flag("label") ?? "the tester", kitFormat: kit.meta.format });
       rb.kit(summariseKit(kit)).sex(inferSex(kit)).roh(runsOfHomozygosity(kit)).traits(callTraits(kit, TRAITS));
       if (flag("panel")) rb.admixture(estimateAdmixture(kit, JSON.parse(readFileSync(flag("panel")!, "utf8"))));
