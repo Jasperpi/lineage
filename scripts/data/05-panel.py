@@ -16,12 +16,20 @@ Inputs (from steps 1-4): 1000g-counts.tsv, the per-chromosome dosage matrices,
    sample-by-sample matrix. Shrinkage of projected (out-of-sample) genomes is
    measured by five-fold hold-out: the ratio of the spread of held-out
    projections to the spread of in-sample scores, per PC.
-4. Continental components. ADMIXTURE's likelihood maximised by EM over both
-   ancestry proportions and component frequencies (unsupervised), started
-   from the frequencies of YRI, CEU, CHB, GIH and PEL so that the five
-   components come out in a fixed order, run to convergence on the core; the
-   component frequencies at every dense SNP are then fitted with the
-   proportions held fixed.
+4. Continental components, by ADMIXTURE's likelihood in its supervised mode:
+   the genomes of the 20 African, European, East Asian and South Asian
+   populations are fixed as wholly their continent's component, and the
+   proportions of the six admixed American, African-American and
+   African-Caribbean populations are estimated, together with all five
+   components' frequencies. The Indigenous American component has no
+   unadmixed reference in 1000 Genomes, so it is learned from those six
+   (started from the Peruvian frequencies). Unsupervised, the fit sits on a
+   nearly flat ridge at K = 5 and gives every European genome about 6%
+   "Indigenous American" and 11% "South Asian", which would be read as
+   ancestry. EM with SQUAREM acceleration on 30,000 core SNPs, until a cycle
+   improves the log-likelihood by less than one part in 10^7 or no
+   proportion moves by more than 0.0001; the component frequencies at every
+   dense SNP are then fitted with the proportions held fixed.
 5. Validation, for the Evidence page: mean component proportions per
    population, and a leave-one-out check of the similarity ranking (each
    genome ranked against population frequencies recomputed without it).
@@ -44,13 +52,16 @@ AUTOSOMES = [str(c) for c in range(1, 23)]
 BASES = "ACGT"
 FREQ_SCALE = 250
 N_PC = 6
+# Each component's reference populations are fixed as wholly that component (ADMIXTURE's
+# supervised mode). The admixed populations are estimated, and NAT is learned from them.
 COMPONENTS = [
-    {"id": "AFR", "label": "Sub-Saharan African", "start": "YRI", "superpopulation": "AFR"},
-    {"id": "EUR", "label": "European", "start": "CEU", "superpopulation": "EUR"},
-    {"id": "EAS", "label": "East Asian", "start": "CHB", "superpopulation": "EAS"},
-    {"id": "SAS", "label": "South Asian", "start": "GIH", "superpopulation": "SAS"},
-    {"id": "NAT", "label": "Indigenous American", "start": "PEL", "superpopulation": "AMR"},
+    {"id": "AFR", "label": "Sub-Saharan African", "start": "YRI", "reference": ["YRI", "LWK", "GWD", "MSL", "ESN"]},
+    {"id": "EUR", "label": "European", "start": "CEU", "reference": ["CEU", "TSI", "FIN", "GBR", "IBS"]},
+    {"id": "EAS", "label": "East Asian", "start": "CHB", "reference": ["CHB", "JPT", "CHS", "CDX", "KHV"]},
+    {"id": "SAS", "label": "South Asian", "start": "GIH", "reference": ["GIH", "PJL", "BEB", "STU", "ITU"]},
+    {"id": "NAT", "label": "Indigenous American", "start": "PEL", "reference": []},
 ]
+ESTIMATED = ["MXL", "PUR", "CLM", "PEL", "ASW", "ACB"]
 
 
 def log(msg):
@@ -171,42 +182,91 @@ def main():
         log(f"fold {f}: shrinkage {np.round(ratios[-1], 3)}")
     shrinkage = np.mean(ratios, axis=0)
 
-    # ---------------------------------------------------------------- components (unsupervised EM)
+    # ---------------------------------------------------------------- components (supervised EM)
+    # The EM runs on up to 30,000 evenly spaced core SNPs (plenty for five continental
+    # components) in float32 to keep memory near 1 GB; sums are taken in float64.
     K = len(COMPONENTS)
-    Gc = np.stack([dense[i][7] for i in core], axis=1).astype(np.float64)  # n x M
-    F = np.array([[dense[i][5][pops.index(comp["start"])] / dense[i][6][pops.index(comp["start"])] for i in core] for comp in COMPONENTS])
+    em_idx = core[np.linspace(0, M - 1, min(M, 30000)).astype(int)]
+    Me = len(em_idx)
+    Gc = np.stack([dense[i][7] for i in em_idx], axis=1).astype(np.float32)  # n x Me
+    # Reference genomes are pinned to their component; the admixed populations start uniform.
+    fixed_pop = {pops.index(code): k for k, comp in enumerate(COMPONENTS) for code in comp["reference"]}
+    assert sorted(pops[p] for p in range(P) if p not in fixed_pop) == sorted(ESTIMATED), "every population is either a reference or estimated"
+    fixed = np.array([pop_of[i] in fixed_pop for i in range(n)])
+    Q = np.full((n, K), 1.0 / K, dtype=np.float32)
+    for i in np.where(fixed)[0]:
+        Q[i] = 0
+        Q[i, fixed_pop[pop_of[i]]] = 1
+    # Start each component from its reference populations' pooled frequencies (NAT: from PEL).
+    def pooled(codes, i):
+        ac = sum(dense[i][5][pops.index(c)] for c in codes)
+        return ac / sum(dense[i][6][pops.index(c)] for c in codes)
+    F = np.array([[pooled(comp["reference"] or [comp["start"]], i) for i in em_idx] for comp in COMPONENTS], dtype=np.float32)
     F = np.clip(F, 1e-3, 1 - 1e-3)
-    Q = np.full((n, K), 1.0 / K)
-    prev = -np.inf
-    log("EM for continental components")
-    for it in range(2000):
+
+    def em_step(Q, F):
+        """One EM update of ADMIXTURE's likelihood; returns the new Q, F and the log-likelihood at the input."""
         Pm = np.clip(Q @ F, 1e-6, 1 - 1e-6)
         A = Gc / Pm
         B = (2 - Gc) / (1 - Pm)
-        ll = float((Gc * np.log(Pm) + (2 - Gc) * np.log(1 - Pm)).sum())
-        Qn = Q * (A @ F.T + B @ (1 - F).T) / (2 * M)
+        ll = float((Gc * np.log(Pm) + (2 - Gc) * np.log(1 - Pm)).sum(dtype=np.float64))
+        Qn = Q * (A @ F.T + B @ (1 - F).T) / (2 * Me)
+        Qn = Qn / Qn.sum(axis=1, keepdims=True)
+        Qn[fixed] = Q[fixed]  # supervised: the reference genomes keep their component
         num = F * (Q.T @ A)
-        den = num + (1 - F) * (Q.T @ B)
-        F = np.clip(num / den, 1e-3, 1 - 1e-3)
-        Q = Qn / Qn.sum(axis=1, keepdims=True)
-        if it % 25 == 0:
-            log(f"  iteration {it}: log-likelihood {ll:.1f}")
-        if abs(ll - prev) < 1e-7 * abs(ll):
+        Fn = np.clip(num / (num + (1 - F) * (Q.T @ B)), 1e-3, 1 - 1e-3).astype(np.float32)
+        return Qn.astype(np.float32), Fn, ll
+
+    # SQUAREM (Varadhan & Roland 2008, scheme S3): extrapolate along two EM steps, project back
+    # into the parameter space, then take one stabilising EM step. If the extrapolated point
+    # has a lower likelihood than one plain step reached, keep the plain steps instead, so the
+    # likelihood never decreases.
+    log(f"EM (supervised, SQUAREM-accelerated) for continental components on {Me} SNPs; {int((~fixed).sum())} genomes estimated")
+    prev = -np.inf
+    Q_prev = Q
+    em_steps = 0
+    for it in range(400):
+        Q1, F1, ll0 = em_step(Q, F)
+        Q2, F2, ll1 = em_step(Q1, F1)
+        rQ, rF = Q1 - Q, F1 - F
+        vQ, vF = (Q2 - Q1) - rQ, (F2 - F1) - rF
+        rn = float(np.sqrt((rQ.astype(np.float64) ** 2).sum() + (rF.astype(np.float64) ** 2).sum()))
+        vn = float(np.sqrt((vQ.astype(np.float64) ** 2).sum() + (vF.astype(np.float64) ** 2).sum()))
+        alpha = min(-1.0, -rn / vn) if vn > 0 else -1.0
+        Qp = np.clip(Q - 2 * alpha * rQ + alpha * alpha * vQ, 1e-6, None)
+        Qp = (Qp / Qp.sum(axis=1, keepdims=True)).astype(np.float32)
+        Fp = np.clip(F - 2 * alpha * rF + alpha * alpha * vF, 1e-3, 1 - 1e-3).astype(np.float32)
+        Q3, F3, llp = em_step(Qp, Fp)
+        em_steps += 3
+        if llp >= ll1:
+            Q, F, ll = Q3, F3, llp
+        else:
+            Q, F, ll = Q2, F2, ll1
+        dq = float(np.abs(Q - Q_prev).max())
+        log(f"  cycle {it}: log-likelihood {ll:.1f} (step length {-alpha:.1f}, largest change in Q {dq:.1e})")
+        # Stop when a cycle gains less than one part in 10^7 of the log-likelihood, or when no
+        # genome's proportions move by more than 0.0001 (Q is published to three decimals).
+        if abs(ll - prev) < 1e-7 * abs(ll) or dq < 1e-4:
             break
         prev = ll
-    em_iterations = it + 1
+        Q_prev = Q
+    em_iterations = em_steps
+    em_ll = ll
+    em_last_dq = dq
+    Q = Q.astype(np.float64)
     # Component frequencies at every dense SNP with Q fixed.
     Fd = np.zeros((N, K))
     for s in range(0, N, 20000):
         idx = range(s, min(N, s + 20000))
-        Gd = np.stack([dense[i][7] for i in idx], axis=1).astype(np.float64)
-        f = np.full((K, Gd.shape[1]), 0.5)
-        for _ in range(100):
-            Pm = np.clip(Q @ f, 1e-6, 1 - 1e-6)
+        Gd = np.stack([dense[i][7] for i in idx], axis=1).astype(np.float32)
+        f = np.full((K, Gd.shape[1]), 0.5, dtype=np.float32)
+        Qf = Q.astype(np.float32)
+        for _ in range(60):
+            Pm = np.clip(Qf @ f, 1e-6, 1 - 1e-6)
             A = Gd / Pm
             B = (2 - Gd) / (1 - Pm)
-            num = f * (Q.T @ A)
-            f = np.clip(num / (num + (1 - f) * (Q.T @ B)), 1e-3, 1 - 1e-3)
+            num = f * (Qf.T @ A)
+            f = np.clip(num / (num + (1 - f) * (Qf.T @ B)), 1e-3, 1 - 1e-3)
         Fd[s:s + Gd.shape[1]] = f.T
         log(f"  dense component frequencies {min(N, s + 20000)}/{N}")
 
@@ -220,11 +280,13 @@ def main():
     lo = 1 / (2 * FREQ_SCALE)
     freq_q = np.round(ac_core / an_core * FREQ_SCALE) / FREQ_SCALE
     fq = np.clip(freq_q, lo, 1 - lo)
-    LL = Gc @ np.log(fq).T + (2 - Gc) @ np.log(1 - fq).T   # n x P
+    Gc = np.stack([dense[i][7] for i in core], axis=1).astype(np.float32)  # n x M, all core SNPs
+    LL = (Gc @ np.log(fq).T.astype(np.float32) + (2 - Gc) @ np.log(1 - fq).T.astype(np.float32)).astype(np.float64)   # n x P
     for i in range(n):
         p = pop_of[i]
-        f_own = np.clip((ac_core[p] - Gc[i]) / (an_core[p] - 2), lo, 1 - lo)
-        LL[i, p] = float(Gc[i] @ np.log(f_own) + (2 - Gc[i]) @ np.log(1 - f_own))
+        # Leave this genome out of its own population's frequencies, at the stored precision.
+        f_own = np.clip(np.round((ac_core[p] - Gc[i]) / (an_core[p] - 2) * FREQ_SCALE) / FREQ_SCALE, lo, 1 - lo)
+        LL[i, p] = float(Gc[i].astype(np.float64) @ np.log(f_own) + (2 - Gc[i].astype(np.float64)) @ np.log(1 - f_own))
     top = LL.argmax(axis=1)
     superpop = {p["code"]: p["superpopulation"] for p in json.load(open(os.path.join(REF, "populations.json")))["populations"]}
     similarity_validation = {
@@ -272,7 +334,13 @@ def main():
         f.write(gz)
     log(f"panel: {len(raw):,} bytes raw, {len(gz):,} gzipped")
 
-    counts_meta = json.load(open(os.path.join(CACHE, "1000g-counts.json")))
+    meta_path = os.path.join(CACHE, "1000g-counts.json")
+    if os.path.exists(meta_path):
+        counts_meta = json.load(open(meta_path))
+    else:
+        # Step 3 writes its source list when it finishes (after chromosome X, which this step does not use).
+        log("WARNING: 1000g-counts.json not written yet; provenance of the genotype files is incomplete. Rerun this step after step 3 finishes.")
+        counts_meta = {"citation": "The 1000 Genomes Project Consortium (2015). A global reference for human genetic variation. Nature 526:68-74.", "panel": {}, "sources": [], "retrieved": date.today().isoformat()}
     chips_meta = json.load(open(os.path.join(CACHE, "chip-snps.json")))
     json.dump({
         "id": "panel.1000g",
@@ -288,8 +356,8 @@ def main():
             "runtimeSeconds": round(time.time() - t_start),
         },
         "qc": {**qc, "dense": N, "core": M, "ldPrune": {"r2": 0.2, "windowKb": 500, "lastKept": 20, "minMaf": 0.05}},
-        "components": [{"id": c["id"], "label": c["label"], "initialisedFrom": c["start"], "populations": c["populations"]} for c in COMPONENTS],
-        "admixture": {"iterations": em_iterations, "logLikelihood": prev, "meanProportions": mean_q},
+        "components": [{"id": c["id"], "label": c["label"], "reference": c["reference"], "initialisedFrom": c["start"], "populations": c["populations"]} for c in COMPONENTS],
+        "admixture": {"mode": "supervised", "estimated": ESTIMATED, "iterations": em_iterations, "snps": int(Me), "logLikelihood": em_ll, "stop": {"relativeLogLikelihood": 1e-7, "maxProportionChange": 1e-4}, "lastProportionChange": em_last_dq, "meanProportions": mean_q},
         "pca": {"varianceExplained": var_explained, "shrinkage": shrinkage.tolist(), "folds": 5},
         "similarityValidation": similarity_validation,
     }, open(os.path.join(REF, "panel.1000g.json"), "w"), indent=1)

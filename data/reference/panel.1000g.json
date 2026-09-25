@@ -1,0 +1,686 @@
+{
+ "id": "panel.1000g",
+ "title": "Reference panel: 1000 Genomes phase 3 on consumer-chip SNPs",
+ "file": "panel.1000g.bin.gz",
+ "sha256": "a71bac72146ebf47990a77839dae7144961982ccad275635ab6cbf4fffc637a2",
+ "bytes": 4672808,
+ "provenance": {
+  "genotypes": {
+   "citation": "The 1000 Genomes Project Consortium (2015). A global reference for human genetic variation. Nature 526:68-74.",
+   "panel": {
+    "name": "integrated_call_samples_v3.20130502.ALL.panel",
+    "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/integrated_call_samples_v3.20130502.ALL.panel",
+    "sha256": "b4023dc6ee2d62ee89c8d4d347db4d348e65518d66d346574cdae7a4bbd76858"
+   },
+   "sources": [
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr1",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr1.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "d259ae8ba408048e9b793dd70970fde5d426e8f165464d5e6bdee7963f27c4b9",
+     "bytes": 1165011543
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr2",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr2.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "537f740d03c872933310523d8b06e896ef166b70d546b2cfeab1ceee0bc566dd",
+     "bytes": 1255861869
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr3",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr3.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "8ad55cd4e47512c365431a36274f94ec5a6df0db6bf2e1a9b865692eb8c3270d",
+     "bytes": 1058895733
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr4",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr4.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "630228658cebc54f82716b9df511ee418ead88010487695d24553340ee8d950b",
+     "bytes": 1071020149
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr5",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr5.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "3b9341901d5aa42bc15c6cc87d683dac4f1e1591dd82a4bb7c78c5081ef85227",
+     "bytes": 946995712
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr6",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr6.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "f54a80c00fbfbe3e89a9e877d382e4f8afad4911597ad79bdcaa9db51f44c983",
+     "bytes": 959144250
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr7",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr7.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "f67f9531b34b278a25a450216bc2609251bbe15d91cc0a4b67dcb02e110631f8",
+     "bytes": 870098463
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr8",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr8.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "55e2ff63b4e67b816d4584f7f9775714beff63c6bf3bb3e614ed9402044ea4e8",
+     "bytes": 824304010
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr9",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr9.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "ada97534be62e5153822257bc17c2436eed16c3494c8e83bc7cd8be690b2afc1",
+     "bytes": 644258549
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr10",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr10.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "b3d73ae3e6c3999ddc1fba4bf4322e07bdc225b54f5d4603eabc9f67ec10ff54",
+     "bytes": 741683063
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr11",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr11.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "64b9f63f6d3b5056f60cb297016d9da169e0668083620e4819c934259cd5b6d1",
+     "bytes": 734583405
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr12",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr12.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "05845d1e5b8720a27298ddebaf76234744d308916d97f54355cf98a1f9962fc5",
+     "bytes": 710187972
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr13",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr13.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "564ebefc96e4b5c795979eebc81d57aca11b1b61ddec8085772864e227824f8d",
+     "bytes": 533918831
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr14",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr14.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "e39a17eb5004440697f27678c8a67b80054d880bb20a58ccde341cb34a4b7378",
+     "bytes": 485261255
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr15",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr15.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "79c35fdbc2eb00ef8220c7825283851e2aed14a56704b5f9c7f9156f99e96ef0",
+     "bytes": 438397058
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr16",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr16.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "9c021e589e619c77d0efdfb3ad9bf89752d32cd9b3916d2efb88168dbeef6284",
+     "bytes": 473472094
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr17",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr17.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "dd7082883b50aac8126c6e9864158cd875c5a60780f1bff700ce9cb85d0383c1",
+     "bytes": 415901551
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr18",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr18.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "820017d0708a8beb856c997470ba06bd9e39e886b3818a6f398a6e6159cd1c2c",
+     "bytes": 418186091
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr19",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr19.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "26683a440906e6a789636ccff4b039e923a5c7d31bde50351a760e494c1bf0c3",
+     "bytes": 344793450
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr20",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr20.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "1bbddc1eac3b35d9408bdfb435632126614a7ac89d32d27aa30db6dc94600fec",
+     "bytes": 327135853
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr21",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr21.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "1942e0709625d77928b191e5a1bfbf523aad2fee1764994a599ae4623305cace",
+     "bytes": 209774472
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chr22",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
+     "sha256": "a90c16c4ff2b3196476d506ae13cb3047fae8670163c7c932c4b0239aef3daf5",
+     "bytes": 205612353
+    },
+    {
+     "name": "1000 Genomes phase 3 genotypes, chrX",
+     "url": "https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chrX.phase3_shapeit2_mvncall_integrated_v1c.20130502.genotypes.vcf.gz",
+     "sha256": "29ee72373faf78030d82779924e6d8f209d6ebd668ab7346c8b46675feb34d3d",
+     "bytes": 1908425030
+    }
+   ],
+   "retrieved": "2026-09-25"
+  },
+  "chips": {
+   "arrays": [
+    {
+     "name": "Infinium Global Screening Array-24 v3.0 (A1)",
+     "snps": 635851
+    },
+    {
+     "name": "Infinium OmniExpress-24 v1.3 (A1)",
+     "snps": 711123
+    }
+   ],
+   "shared": 175406,
+   "build": 37,
+   "sources": [
+    {
+     "name": "Infinium Global Screening Array-24 v3.0 (A1): rsID mapping",
+     "url": "https://support.illumina.com/content/dam/illumina-support/documents/downloads/productfiles/global-screening-array-24/v3-0/infinium-global-screening-array-24-v3-0-a1-b151-rsids.zip",
+     "sha256": "d29731372f0a5719bca33b8ffbb02e2437981d16a9a55286687ec4b29d8af489",
+     "bytes": 3409873,
+     "retrieved": "2026-09-25"
+    },
+    {
+     "name": "Infinium Global Screening Array-24 v3.0 (A1): physical coordinates",
+     "url": "https://support.illumina.com/content/dam/illumina-support/documents/downloads/productfiles/global-screening-array-24/v3-0/infinium-global-screening-array-24-v3-0-a1-physical-genetic-coordinates.zip",
+     "sha256": "c854cc550b42dfed0f483e4a7dee0f2a0d99e163d4afe214733bf402f2391c08",
+     "bytes": 8260314,
+     "retrieved": "2026-09-25"
+    },
+    {
+     "name": "Infinium OmniExpress-24 v1.3 (A1): rsID mapping",
+     "url": "https://support.illumina.com/content/dam/illumina-support/documents/downloads/productfiles/humanomniexpress-24/v1-3/infinium-omniexpress-24-v1-3-a1-b150-rsids.zip",
+     "sha256": "20440eb8b2edb6393cd8c885d03ad33e3fa79f5377436a508ec4575eca27654f",
+     "bytes": 3366069,
+     "retrieved": "2026-09-25"
+    },
+    {
+     "name": "Infinium OmniExpress-24 v1.3 (A1): physical coordinates",
+     "url": "https://support.illumina.com/content/dam/illumina-support/documents/downloads/productfiles/humanomniexpress-24/v1-3/infinium-omniexpress-24-v1-3-a1-physical-genetic-coordinates.zip",
+     "sha256": "f8918790776bb88eb8fec8d8f9756e7fba0c0bdc762a08dc6543e640d78df31d",
+     "bytes": 8655458,
+     "retrieved": "2026-09-25"
+    }
+   ]
+  },
+  "script": "scripts/data/05-panel.py",
+  "generated": "2026-09-25",
+  "runtimeSeconds": 642
+ },
+ "qc": {
+  "input": 165351,
+  "palindromic": 296,
+  "incomplete": 0,
+  "rare": 878,
+  "kept": 164177,
+  "dense": 164177,
+  "core": 85700,
+  "ldPrune": {
+   "r2": 0.2,
+   "windowKb": 500,
+   "lastKept": 20,
+   "minMaf": 0.05
+  }
+ },
+ "components": [
+  {
+   "id": "AFR",
+   "label": "Sub-Saharan African",
+   "reference": [
+    "YRI",
+    "LWK",
+    "GWD",
+    "MSL",
+    "ESN"
+   ],
+   "initialisedFrom": "YRI",
+   "populations": [
+    "YRI",
+    "LWK",
+    "GWD",
+    "MSL",
+    "ESN",
+    "ACB"
+   ]
+  },
+  {
+   "id": "EUR",
+   "label": "European",
+   "reference": [
+    "CEU",
+    "TSI",
+    "FIN",
+    "GBR",
+    "IBS"
+   ],
+   "initialisedFrom": "CEU",
+   "populations": [
+    "CEU",
+    "TSI",
+    "FIN",
+    "GBR",
+    "IBS"
+   ]
+  },
+  {
+   "id": "EAS",
+   "label": "East Asian",
+   "reference": [
+    "CHB",
+    "JPT",
+    "CHS",
+    "CDX",
+    "KHV"
+   ],
+   "initialisedFrom": "CHB",
+   "populations": [
+    "CHB",
+    "JPT",
+    "CHS",
+    "CDX",
+    "KHV"
+   ]
+  },
+  {
+   "id": "SAS",
+   "label": "South Asian",
+   "reference": [
+    "GIH",
+    "PJL",
+    "BEB",
+    "STU",
+    "ITU"
+   ],
+   "initialisedFrom": "GIH",
+   "populations": [
+    "GIH",
+    "PJL",
+    "BEB",
+    "STU",
+    "ITU"
+   ]
+  },
+  {
+   "id": "NAT",
+   "label": "Indigenous American",
+   "reference": [],
+   "initialisedFrom": "PEL",
+   "populations": []
+  }
+ ],
+ "admixture": {
+  "mode": "supervised",
+  "estimated": [
+   "MXL",
+   "PUR",
+   "CLM",
+   "PEL",
+   "ASW",
+   "ACB"
+  ],
+  "iterations": 147,
+  "snps": 30000,
+  "logLikelihood": -75158423.37815796,
+  "stop": {
+   "relativeLogLikelihood": 1e-07,
+   "maxProportionChange": 0.0001
+  },
+  "lastProportionChange": 0.00025048479437828064,
+  "meanProportions": {
+   "YRI": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "LWK": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "GWD": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "MSL": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "ESN": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "ASW": [
+    0.7672,
+    0.1698,
+    0.0085,
+    0.0215,
+    0.0331
+   ],
+   "ACB": [
+    0.8893,
+    0.0874,
+    0.0035,
+    0.0173,
+    0.0025
+   ],
+   "MXL": [
+    0.0376,
+    0.4079,
+    0.0355,
+    0.0437,
+    0.4753
+   ],
+   "PUR": [
+    0.1388,
+    0.6997,
+    0.0077,
+    0.0236,
+    0.1302
+   ],
+   "CLM": [
+    0.0782,
+    0.6202,
+    0.0122,
+    0.0259,
+    0.2634
+   ],
+   "PEL": [
+    0.0245,
+    0.1296,
+    0.0237,
+    0.0296,
+    0.7927
+   ],
+   "CHB": [
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "JPT": [
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "CHS": [
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "CDX": [
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "KHV": [
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "CEU": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "TSI": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "FIN": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "GBR": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "IBS": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "GIH": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0
+   ],
+   "PJL": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0
+   ],
+   "BEB": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0
+   ],
+   "STU": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0
+   ],
+   "ITU": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0
+   ]
+  }
+ },
+ "pca": {
+  "varianceExplained": [
+   0.06528842105178971,
+   0.037418604706186326,
+   0.011099388596377208,
+   0.008470513794038242,
+   0.0017980945377141793,
+   0.0014649237063829375
+  ],
+  "shrinkage": [
+   0.9920891013189701,
+   0.9884302444627643,
+   0.9488593587762573,
+   0.9659402874284482,
+   0.7762225414785634,
+   0.7212969478101348
+  ],
+  "folds": 5
+ },
+ "similarityValidation": {
+  "YRI": {
+   "samples": 108,
+   "ownFirst": 0.9907,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "ESN"
+  },
+  "LWK": {
+   "samples": 99,
+   "ownFirst": 1.0,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": null
+  },
+  "GWD": {
+   "samples": 113,
+   "ownFirst": 1.0,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": null
+  },
+  "MSL": {
+   "samples": 85,
+   "ownFirst": 0.9882,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "GWD"
+  },
+  "ESN": {
+   "samples": 99,
+   "ownFirst": 0.9091,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "YRI"
+  },
+  "ASW": {
+   "samples": 61,
+   "ownFirst": 0.4426,
+   "sameContinentFirst": 0.9508,
+   "mostCommonOther": "ACB"
+  },
+  "ACB": {
+   "samples": 96,
+   "ownFirst": 0.8333,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "YRI"
+  },
+  "MXL": {
+   "samples": 64,
+   "ownFirst": 0.5469,
+   "sameContinentFirst": 0.9688,
+   "mostCommonOther": "CLM"
+  },
+  "PUR": {
+   "samples": 104,
+   "ownFirst": 0.9519,
+   "sameContinentFirst": 0.9519,
+   "mostCommonOther": "ASW"
+  },
+  "CLM": {
+   "samples": 94,
+   "ownFirst": 0.883,
+   "sameContinentFirst": 0.9468,
+   "mostCommonOther": "IBS"
+  },
+  "PEL": {
+   "samples": 85,
+   "ownFirst": 0.8706,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "MXL"
+  },
+  "CHB": {
+   "samples": 103,
+   "ownFirst": 0.767,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "CHS"
+  },
+  "JPT": {
+   "samples": 104,
+   "ownFirst": 0.9904,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "CHB"
+  },
+  "CHS": {
+   "samples": 105,
+   "ownFirst": 0.9619,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "CHB"
+  },
+  "CDX": {
+   "samples": 93,
+   "ownFirst": 0.9785,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "CHS"
+  },
+  "KHV": {
+   "samples": 99,
+   "ownFirst": 0.9697,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "CHS"
+  },
+  "CEU": {
+   "samples": 99,
+   "ownFirst": 0.9293,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "GBR"
+  },
+  "TSI": {
+   "samples": 107,
+   "ownFirst": 1.0,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": null
+  },
+  "FIN": {
+   "samples": 99,
+   "ownFirst": 1.0,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": null
+  },
+  "GBR": {
+   "samples": 91,
+   "ownFirst": 0.4725,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "CEU"
+  },
+  "IBS": {
+   "samples": 107,
+   "ownFirst": 0.9907,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "TSI"
+  },
+  "GIH": {
+   "samples": 103,
+   "ownFirst": 0.7476,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "PJL"
+  },
+  "PJL": {
+   "samples": 96,
+   "ownFirst": 0.9479,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "ITU"
+  },
+  "BEB": {
+   "samples": 86,
+   "ownFirst": 0.9884,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "ITU"
+  },
+  "STU": {
+   "samples": 102,
+   "ownFirst": 0.9216,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "ITU"
+  },
+  "ITU": {
+   "samples": 102,
+   "ownFirst": 0.7941,
+   "sameContinentFirst": 1.0,
+   "mostCommonOther": "STU"
+  }
+ }
+}
