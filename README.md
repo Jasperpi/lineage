@@ -113,4 +113,13 @@ lineage/
   docs/research    the research report and its notes
 ```
 
-MIT licensed. Not a medical device; nothing here is medical advice.
+## Source and licence
+
+The code is open source under the MIT licence ([`LICENSE`](LICENSE)). It is
+published at [github.com/Jasperpi/lineage](https://github.com/Jasperpi/lineage),
+a copy of the `lineage/` folder of the private repository that also holds
+jaspermeller.com, with its history, updated at each release. The reference
+data in `data/reference` is derived from sources with their own terms, listed
+in [`scripts/data/README.md`](scripts/data/README.md).
+
+Not a medical device; nothing here is medical advice.

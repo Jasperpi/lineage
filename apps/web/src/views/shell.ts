@@ -27,7 +27,7 @@ export function shell(): { root: HTMLElement; main: HTMLElement; setRoute: (r: s
   const footer = h("footer", { class: "footer" },
     h("div", { class: "footer-in" },
       h("div", {},
-        h("p", {}, h("strong", { style: "color:var(--ink-2)" }, "Lineage"), " reads consumer DNA files and family trees in your browser. Its code is MIT-licensed; it makes no accounts, runs no analytics, and is not a medical device."),
+        h("p", {}, h("strong", { style: "color:var(--ink-2)" }, "Lineage"), " reads consumer DNA files and family trees in your browser. It is open source (", h("a", { href: "https://github.com/Jasperpi/lineage", target: "_blank", rel: "noopener" }, "the code and data scripts"), ", MIT licence); it makes no accounts, runs no analytics, and is not a medical device."),
         h("p", {}, "Reference data: 1000 Genomes Project phase 3 (2,504 genomes, 26 populations); HapMap II genetic map on GRCh37; Illumina GSA and OmniExpress manifests; Shared cM Project v4 (Bettinger 2020, via DNA Painter). Details and checksums on the ", h("a", { href: "#/evidence" }, "Evidence"), " page."),
         ledgerLine),
       h("div", {},

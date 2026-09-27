@@ -45,7 +45,8 @@ the tree recorded the shared grandparents' parents (regression test added).
 
 1. **Privacy that can be checked, not promised.** No server receives genetic
    data; the CSP forbids the page from contacting any other origin; the ledger
-   shows every request. Next: offline use and published build hashes.
+   shows every request; the code is public. Next: offline use and published
+   build hashes.
 2. **Reference data counted from source.** The panel is not someone else's
    summary. `scripts/data` downloads the 1000 Genomes genotype VCFs, Illumina's
    chip manifests and the HapMap map, records each file's SHA-256, and counts.
@@ -97,9 +98,14 @@ Every number that reaches the page goes through the same steps.
 
 ### Release 1, still to do
 
+The source was published on 2026-09-27 at
+[github.com/Jasperpi/lineage](https://github.com/Jasperpi/lineage) under the MIT
+licence: a copy of `lineage/` with its history, updated at each release. The
+repository it comes from stays private, because it also holds other people's
+data and unreleased work. The app now says "open source" and links to it.
+
 | Work | Why |
 |---|---|
-| **Publish the source.** The repository is private as of this release, so "open" currently means open data and published methods, not code anyone can read. Either make the repository public or move `lineage/` to its own public repository | Every privacy and reproducibility claim above is only checkable if the code and the data scripts can be read and rerun by others. Until then the app says "MIT-licensed", not "open source" |
 | Offline use and published build hashes | Lets people check that the page they run is the code that was published |
 | Settle the three licence questions below | Removes the main legal risks before any wider launch |
 

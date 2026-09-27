@@ -44,7 +44,7 @@ function privacy(): HTMLElement {
       h("details", { class: "more" }, h("summary", {}, "The security policy and how to verify it yourself"),
         h("p", { class: "small muted" }, "Lineage is served with this Content-Security-Policy header, which browsers enforce:"),
         h("pre", { class: "mono small", style: "white-space:pre-wrap;background:var(--paper-2);padding:12px;border-radius:10px" }, "default-src 'self'; connect-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self' https://jaspermeller.com https://*.jaspermeller.com"),
-        h("p", { class: "small muted", style: "margin:0" }, "To check: open your browser's developer tools on the Network tab and load a file; no request carries it. Or let the page load its reference files (they appear in the table above), switch off your network, and keep working."))),
+        h("p", { class: "small muted", style: "margin:0" }, "To check: open your browser's developer tools on the Network tab and load a file; no request carries it. Or let the page load its reference files (they appear in the table above), switch off your network, and keep working. Or read the code that does all of this: ", h("a", { href: "https://github.com/Jasperpi/lineage", target: "_blank", rel: "noopener" }, "github.com/Jasperpi/lineage"), "."))),
     h("div", { class: "fig-foot" }, "No accounts, cookies, analytics or third-party scripts. The only thing stored on this device is your light or dark preference."));
 }
 
