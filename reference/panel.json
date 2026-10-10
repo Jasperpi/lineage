@@ -1,0 +1,2077 @@
+{
+ "id": "panel.hgdp1kg",
+ "title": "Reference panel: gnomAD HGDP+1KG on consumer-chip SNPs",
+ "version": 2,
+ "file": "panel.bin.gz",
+ "bytes": 4333373,
+ "sha256": "652f2adcb92b3791d0aae3967940d939e3eef98d90dd1a3779ba67570e037948",
+ "tiers": [
+  {
+   "continent": "AFR",
+   "file": "panel.AFR.bin.gz",
+   "bytes": 1527772,
+   "sha256": "ea53317b0f51871013c6f65c142ffb69ed9b4969c45a822e2e9d3732a4dc90ff",
+   "populations": [
+    "ACB",
+    "ASW",
+    "BantuKenya",
+    "BantuSouthAfrica",
+    "BiakaPygmy",
+    "ESN",
+    "GWD",
+    "LWK",
+    "MSL",
+    "Mandenka",
+    "MbutiPygmy",
+    "San",
+    "YRI",
+    "Yoruba"
+   ],
+   "regions": [
+    {
+     "id": "WAF",
+     "label": "West African",
+     "populations": [
+      "YRI",
+      "ESN",
+      "GWD",
+      "MSL",
+      "Mandenka",
+      "Yoruba"
+     ],
+     "alleles": 944
+    },
+    {
+     "id": "EAF",
+     "label": "East African",
+     "populations": [
+      "LWK",
+      "BantuKenya"
+     ],
+     "alleles": 214
+    },
+    {
+     "id": "CAF",
+     "label": "Central African forager",
+     "populations": [
+      "BiakaPygmy",
+      "MbutiPygmy"
+     ],
+     "alleles": 70
+    },
+    {
+     "id": "SAF",
+     "label": "Southern African",
+     "populations": [
+      "San",
+      "BantuSouthAfrica"
+     ],
+     "alleles": 28
+    }
+   ]
+  },
+  {
+   "continent": "EUR",
+   "file": "panel.EUR.bin.gz",
+   "bytes": 1708811,
+   "sha256": "bcab212b4b669300e26646b486da938b65ad3e8ecd6bd496a252d57516ba682e",
+   "populations": [
+    "Adygei",
+    "Basque",
+    "CEU",
+    "FIN",
+    "French",
+    "GBR",
+    "IBS",
+    "Italian",
+    "Orcadian",
+    "Russian",
+    "Sardinian",
+    "TSI",
+    "Tuscan",
+    "ASJ"
+   ],
+   "regions": [
+    {
+     "id": "NWE",
+     "label": "North-western European",
+     "populations": [
+      "CEU",
+      "GBR",
+      "French",
+      "Orcadian"
+     ],
+     "alleles": 504
+    },
+    {
+     "id": "SEU",
+     "label": "Southern European",
+     "populations": [
+      "TSI",
+      "IBS",
+      "Italian",
+      "Tuscan",
+      "Sardinian",
+      "Basque"
+     ],
+     "alleles": 552
+    },
+    {
+     "id": "FIN",
+     "label": "Finnish",
+     "populations": [
+      "FIN"
+     ],
+     "alleles": 196
+    },
+    {
+     "id": "EEU",
+     "label": "Eastern European",
+     "populations": [
+      "Russian"
+     ],
+     "alleles": 50
+    },
+    {
+     "id": "CAU",
+     "label": "North Caucasian",
+     "populations": [
+      "Adygei"
+     ],
+     "alleles": 34
+    },
+    {
+     "id": "ASJ",
+     "label": "Ashkenazi Jewish",
+     "populations": [],
+     "alleles": 3470,
+     "frequencyOnly": true,
+     "filledFromContinent": 1
+    }
+   ]
+  },
+  {
+   "continent": "MID",
+   "file": "panel.MID.bin.gz",
+   "bytes": 559964,
+   "sha256": "2edd288f8f78d05ed1dab5d811c635f799dd637b4902ba1bdf35e1c95989091a",
+   "populations": [
+    "Bedouin",
+    "Druze",
+    "Mozabite",
+    "Palestinian"
+   ],
+   "regions": [
+    {
+     "id": "LEV",
+     "label": "Levantine",
+     "populations": [
+      "Druze",
+      "Palestinian"
+     ],
+     "alleles": 174
+    },
+    {
+     "id": "BED",
+     "label": "Bedouin",
+     "populations": [
+      "Bedouin"
+     ],
+     "alleles": 90
+    },
+    {
+     "id": "NAF",
+     "label": "North African",
+     "populations": [
+      "Mozabite"
+     ],
+     "alleles": 48
+    }
+   ]
+  },
+  {
+   "continent": "SAS",
+   "file": "panel.SAS.bin.gz",
+   "bytes": 1270140,
+   "sha256": "0581d3fee20d0f719f0657d78dff5515e486967636c9ffa483e4f8bad6b56e67",
+   "populations": [
+    "BEB",
+    "Balochi",
+    "Brahui",
+    "Burusho",
+    "GIH",
+    "Hazara",
+    "ITU",
+    "Kalash",
+    "Makrani",
+    "PJL",
+    "Pathan",
+    "STU",
+    "Sindhi"
+   ],
+   "regions": [
+    {
+     "id": "SOA",
+     "label": "South Asian",
+     "populations": [
+      "GIH",
+      "PJL",
+      "BEB",
+      "STU",
+      "ITU"
+     ],
+     "alleles": 1020
+    },
+    {
+     "id": "IND",
+     "label": "Indus valley & Balochistan",
+     "populations": [
+      "Balochi",
+      "Brahui",
+      "Sindhi",
+      "Pathan",
+      "Burusho"
+     ],
+     "alleles": 234
+    }
+   ]
+  },
+  {
+   "continent": "EAS",
+   "file": "panel.EAS.bin.gz",
+   "bytes": 1895345,
+   "sha256": "54b700dbd1ff56adcd65cea3d6c2c3de6a3323b61f76247943e62b6d4e944c3d",
+   "populations": [
+    "CDX",
+    "CHB",
+    "CHS",
+    "Cambodian",
+    "Dai",
+    "Daur",
+    "Han",
+    "Hezhen",
+    "JPT",
+    "Japanese",
+    "KHV",
+    "Lahu",
+    "Miao",
+    "Mongola",
+    "Naxi",
+    "Oroqen",
+    "She",
+    "Tu",
+    "Tujia",
+    "Uygur",
+    "Xibo",
+    "Yakut",
+    "Yi"
+   ],
+   "regions": [
+    {
+     "id": "NEA",
+     "label": "North-east Asian",
+     "populations": [
+      "CHB",
+      "JPT",
+      "Japanese",
+      "Han",
+      "Daur",
+      "Hezhen",
+      "Mongola",
+      "Oroqen",
+      "Tu",
+      "Xibo"
+     ],
+     "alleles": 660
+    },
+    {
+     "id": "SEA",
+     "label": "Southern Chinese & South-east Asian",
+     "populations": [
+      "CHS",
+      "CDX",
+      "KHV",
+      "Cambodian",
+      "Dai",
+      "Lahu",
+      "Miao",
+      "Naxi",
+      "She",
+      "Tujia",
+      "Yi"
+     ],
+     "alleles": 750
+    },
+    {
+     "id": "SIB",
+     "label": "Siberian",
+     "populations": [
+      "Yakut"
+     ],
+     "alleles": 46
+    }
+   ]
+  },
+  {
+   "continent": "OCE",
+   "file": "panel.OCE.bin.gz",
+   "bytes": 122124,
+   "sha256": "9f70c6b3f0b22d7c072e06ad8b3bfdd4cea2fe379f9ddf59abf2d882d5744ff3",
+   "populations": [
+    "Melanesian",
+    "Papuan"
+   ],
+   "regions": []
+  },
+  {
+   "continent": "NAT",
+   "file": "panel.NAT.bin.gz",
+   "bytes": 695295,
+   "sha256": "d52f4eae34c7d70c3dd1cd9072f72c3ade5082af0f2d5f1f882ecaa1b3c7d50d",
+   "populations": [
+    "CLM",
+    "Colombian",
+    "Karitiana",
+    "MXL",
+    "Maya",
+    "PEL",
+    "PUR",
+    "Pima",
+    "Surui"
+   ],
+   "regions": []
+  }
+ ],
+ "calibration": "calibration.json",
+ "holdout": null,
+ "provenance": {
+  "genotypes": {
+   "citation": "Koenig Z, et al. (2024). A harmonized public resource of deeply sequenced diverse human genomes. Genome Research 34:796-809.",
+   "terms": "gnomAD data are released under CC0; attribution requested; no attempt to re-identify participants.",
+   "retrieved": "2026-10-10",
+   "sources": [
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr1",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr1.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "8c31c9e3c7b0c7e76112f39f973550e6f47ccd3c90137ef7c6f760e317e0be2a",
+     "bytes": 1503407263,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr2",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr2.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "17ebccf7debf863ce7bd45097c837650a441a1a49fbaa7b8e8781aa29b1c1ba0",
+     "bytes": 1602060604,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr3",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr3.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "ca501337609009ff916ddbdb698b2a9b908429af8c88eeb1737774d3a1e30cef",
+     "bytes": 1354684323,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr4",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr4.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "bcf35f96ff510da04cf518d2b61ad864b8bf112ae36902c46433beff042c734a",
+     "bytes": 1363835896,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr5",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr5.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "86c9a1d67cd89cf1feebf9b2f889de020bba36673e0eec50ce85d9b5becf8bc0",
+     "bytes": 1228150180,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr6",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr6.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "57aa318bc71c5b292caaf1897943d37da2168c94d90e72503b60a31328014f23",
+     "bytes": 1221841336,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr7",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr7.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "659cced31dcdf568f4c9f1fa8f121c1ae579507c6a10855e43c198aea79b40a2",
+     "bytes": 1126896038,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr8",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr8.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "335dd58bf655beba5753c49eaf4beef8b71736aa546d64e8d81960b7f53e97d0",
+     "bytes": 1049343171,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr9",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr9.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "c576a377821e6eabd4da6f27ef15c6f2ec4799e0e6c931da5041b9750d0f9c69",
+     "bytes": 844070006,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr10",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr10.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "400320588b8d6110a102a57167dec3dc1d719bb3d458432f8668d4e72a4c4c35",
+     "bytes": 960605479,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr11",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr11.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "7ee9395d0d63be9632c4a81ed5ab7ed806d45f71818e342d59cf867399d53bb1",
+     "bytes": 938082830,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr12",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr12.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "dbaac59b7f279fced6f17c3ec4caed52a002b0521ed683adbed155cc586f70c2",
+     "bytes": 911827381,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr13",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr13.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "3f8a104559d14fb3b1894323ea8e9d20324b3f0d1eb1123b4e906e469bd9227a",
+     "bytes": 685109477,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr14",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr14.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "12bcb1702cadff8aea9fb827e19a79a10e29e0d60eed2aaf2f4004bae8c0443a",
+     "bytes": 622981631,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr15",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr15.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "3384c6afa4539e8cc24c2167639a2de92faa07ba8172c6a3d31d89ca62dbff5a",
+     "bytes": 559117321,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr16",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr16.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "13933fe7fcefe627fe626078cde756df0e76a00facb230067727943f2c5bc21c",
+     "bytes": 613162788,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr17",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr17.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "5188970a8624b0f777c72a88a72c52d2196ec9850297f4d28c473598ec04c6ec",
+     "bytes": 545009006,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr18",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr18.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "1f6d964fdd849bb9b24ea51200c4fa8eff0c141a5cb638b4630e064ee5db5fa7",
+     "bytes": 536954572,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr19",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr19.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "162a0e42b56a5d317da48e0f6cecc5513beb7a26703b70ec41cff7605522fce5",
+     "bytes": 457215730,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr20",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr20.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "46130f35dc3aeeb732804a6f51dcdfc8af669510421cbdaa84f388c65a793aed",
+     "bytes": 426526122,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr21",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr21.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "1618749611db075ddaaa930ce1f15008426b79678874925db5b73ea584cc0b39",
+     "bytes": 269957263,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD HGDP+1KG phased haplotypes v2, chr22",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/resources/hgdp_1kg/phased_haplotypes_v2/hgdp1kgp_chr22.filtered.SNV_INDEL.phased.shapeit5.bcf",
+     "sha256": "09e50c698522d19bbc2c43a2ea2d29b290d63cf8c1d6983c5198dcb4289ff3fa",
+     "bytes": 278689536,
+     "retrieved": "2026-10-10"
+    }
+   ],
+   "countsByChromosome": {
+    "1": {
+     "targets": 93611,
+     "absent": 10924,
+     "notBiallelicSnp": 2552,
+     "palindromic": 1102,
+     "missingOrUnphased": 0,
+     "written": 80707
+    },
+    "2": {
+     "targets": 96025,
+     "absent": 12326,
+     "notBiallelicSnp": 2852,
+     "palindromic": 1079,
+     "missingOrUnphased": 0,
+     "written": 81702
+    },
+    "3": {
+     "targets": 77550,
+     "absent": 8519,
+     "notBiallelicSnp": 2188,
+     "palindromic": 752,
+     "missingOrUnphased": 0,
+     "written": 67541
+    },
+    "4": {
+     "targets": 67579,
+     "absent": 6204,
+     "notBiallelicSnp": 1957,
+     "palindromic": 711,
+     "missingOrUnphased": 0,
+     "written": 60033
+    },
+    "5": {
+     "targets": 67969,
+     "absent": 6887,
+     "notBiallelicSnp": 1926,
+     "palindromic": 660,
+     "missingOrUnphased": 0,
+     "written": 59805
+    },
+    "6": {
+     "targets": 76859,
+     "absent": 7263,
+     "notBiallelicSnp": 2243,
+     "palindromic": 1531,
+     "missingOrUnphased": 0,
+     "written": 67343
+    },
+    "7": {
+     "targets": 62003,
+     "absent": 6479,
+     "notBiallelicSnp": 1771,
+     "palindromic": 752,
+     "missingOrUnphased": 0,
+     "written": 54175
+    },
+    "8": {
+     "targets": 58531,
+     "absent": 5611,
+     "notBiallelicSnp": 1963,
+     "palindromic": 687,
+     "missingOrUnphased": 0,
+     "written": 51575
+    },
+    "9": {
+     "targets": 50764,
+     "absent": 5322,
+     "notBiallelicSnp": 1626,
+     "palindromic": 597,
+     "missingOrUnphased": 0,
+     "written": 44337
+    },
+    "10": {
+     "targets": 60009,
+     "absent": 6054,
+     "notBiallelicSnp": 2032,
+     "palindromic": 633,
+     "missingOrUnphased": 0,
+     "written": 52688
+    },
+    "11": {
+     "targets": 58645,
+     "absent": 7076,
+     "notBiallelicSnp": 1696,
+     "palindromic": 645,
+     "missingOrUnphased": 0,
+     "written": 50351
+    },
+    "12": {
+     "targets": 55784,
+     "absent": 5999,
+     "notBiallelicSnp": 1614,
+     "palindromic": 630,
+     "missingOrUnphased": 0,
+     "written": 48609
+    },
+    "13": {
+     "targets": 44049,
+     "absent": 5662,
+     "notBiallelicSnp": 1198,
+     "palindromic": 384,
+     "missingOrUnphased": 0,
+     "written": 37622
+    },
+    "14": {
+     "targets": 37042,
+     "absent": 3956,
+     "notBiallelicSnp": 1134,
+     "palindromic": 396,
+     "missingOrUnphased": 0,
+     "written": 32340
+    },
+    "15": {
+     "targets": 35684,
+     "absent": 4795,
+     "notBiallelicSnp": 961,
+     "palindromic": 434,
+     "missingOrUnphased": 0,
+     "written": 30126
+    },
+    "16": {
+     "targets": 37690,
+     "absent": 4752,
+     "notBiallelicSnp": 1320,
+     "palindromic": 570,
+     "missingOrUnphased": 0,
+     "written": 31948
+    },
+    "17": {
+     "targets": 35279,
+     "absent": 5998,
+     "notBiallelicSnp": 993,
+     "palindromic": 459,
+     "missingOrUnphased": 0,
+     "written": 28500
+    },
+    "18": {
+     "targets": 33859,
+     "absent": 3011,
+     "notBiallelicSnp": 905,
+     "palindromic": 272,
+     "missingOrUnphased": 0,
+     "written": 30259
+    },
+    "19": {
+     "targets": 26161,
+     "absent": 4200,
+     "notBiallelicSnp": 838,
+     "palindromic": 384,
+     "missingOrUnphased": 0,
+     "written": 21302
+    },
+    "20": {
+     "targets": 28439,
+     "absent": 3090,
+     "notBiallelicSnp": 780,
+     "palindromic": 280,
+     "missingOrUnphased": 0,
+     "written": 24812
+    },
+    "21": {
+     "targets": 16036,
+     "absent": 1897,
+     "notBiallelicSnp": 460,
+     "palindromic": 163,
+     "missingOrUnphased": 0,
+     "written": 13821
+    },
+    "22": {
+     "targets": 16851,
+     "absent": 2074,
+     "notBiallelicSnp": 525,
+     "palindromic": 238,
+     "missingOrUnphased": 0,
+     "written": 14379
+    }
+   }
+  },
+  "ashkenazi": {
+   "citation": "Chen S, Francioli LC, Goodrich JK, et al. (2024). A genomic mutational constraint map using variation in 76,156 human genomes. Nature 625:92-100 (gnomAD v4).",
+   "terms": "gnomAD data are released under CC0; attribution requested; no attempt to re-identify participants.",
+   "sources": [
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr1 (AC_asj, AN_asj at 8202 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr1.vcf.bgz",
+     "indexSha256": "2db193d8be22bcc44ca4d362f972ddbd1ae2a2ff81641e78ea73df392cd8d474",
+     "rowsSha256": "c2863a07d24fb5368119997aa6d93ebb29847e88a7b80a1ab218a94996810004",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr2 (AC_asj, AN_asj at 8303 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr2.vcf.bgz",
+     "indexSha256": "ff54e82a93d76a36bc19c35a97881327bcd404158b01fa8d56b9edf47e1f8033",
+     "rowsSha256": "c2cc2a7280c72e5fede244a7ff61117f598284340c8cc1b13de6917800e4a8b1",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr3 (AC_asj, AN_asj at 6864 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr3.vcf.bgz",
+     "indexSha256": "003808ad80a124b47734968df15935d76ce38bfc18d774cb6d49bc9d01b421d3",
+     "rowsSha256": "e2684555c29cb3a901b22ccc41940d7a26f2c3e7cec4db5ce4cbc4bd00af7734",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr4 (AC_asj, AN_asj at 6101 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr4.vcf.bgz",
+     "indexSha256": "21f7b9332dacee7d944802906d20bdc5e20e9313ef052cf228bf359bc1d367cf",
+     "rowsSha256": "45c6d9718a3cca810e34ddd5af01cd303588d7eb82f543187db99f395f52ce15",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr5 (AC_asj, AN_asj at 6078 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr5.vcf.bgz",
+     "indexSha256": "b67f1c07093cf0d1cf3d5c34109ec9502e7bfc09eeada826b793e7de349273b6",
+     "rowsSha256": "11761cca439fec4aa9a1e2df8ad12d24ed539a293c6353d89a55bc84e7dca48e",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr6 (AC_asj, AN_asj at 6844 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr6.vcf.bgz",
+     "indexSha256": "afacfc86417bd3a09235aeeaec27e82e3997a85cf229c24619d97d62fb1987f7",
+     "rowsSha256": "e0fe4c2b0c9aa25122a34b35dd6b90e246dad86394976c993df6ac38feafd518",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr7 (AC_asj, AN_asj at 5506 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr7.vcf.bgz",
+     "indexSha256": "9f6982f126c022c8a99187db108ceb4d03c6f4840f82a60e86af5aa5e460eb37",
+     "rowsSha256": "65d0bbba27b3b46ca3ecffe4e53cbbfce66267bcb5becf7953f5e1bdbcb07a34",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr8 (AC_asj, AN_asj at 5241 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr8.vcf.bgz",
+     "indexSha256": "5d013c7841d03ab365bc62058bfedc2436326ecd7d5009549aa03bd835b5d5ce",
+     "rowsSha256": "812967ed32a2428b969f80c7ff37da86665cea5736f673ee7b88af483e5bec5a",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr9 (AC_asj, AN_asj at 4506 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr9.vcf.bgz",
+     "indexSha256": "39a62385be222291e6e088ca4a906aa1b54b3df752c857c9f443798640548ded",
+     "rowsSha256": "2442f011ac94f343c6e2405be1be556e2adaaefd8adbf6c87721c996b70f0429",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr10 (AC_asj, AN_asj at 5355 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr10.vcf.bgz",
+     "indexSha256": "c075273d130ee4b948a86ba35e156a4c3a03a27a70eb75d5637a6b795c9a487e",
+     "rowsSha256": "d872e4a917a756b62fec1fe70be37c99493ca79937f5feeb999d78b13c9d3782",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr11 (AC_asj, AN_asj at 5117 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr11.vcf.bgz",
+     "indexSha256": "18cae79a76e05e1e65d10a61cb69f6ef164c21e25cfdba9c0a55661e2525355a",
+     "rowsSha256": "2cbed8f1a4fb3c76aacea9aa7eb6ba1014e57a116bb5f54f41a1fbba0838e687",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr12 (AC_asj, AN_asj at 4940 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr12.vcf.bgz",
+     "indexSha256": "73f9b9bbe4850b66c3bfcbd463c19346839ab6aae1d4f757145231ed30bc54ab",
+     "rowsSha256": "2dd23b68ec042e53e19d53092b13afce64515823a64dc35a262e2a2b942c0505",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr13 (AC_asj, AN_asj at 3823 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr13.vcf.bgz",
+     "indexSha256": "6842fe668be3a7970c19eaf2f9e1b74d456e0bf78b3822a9b86da21e8e748c46",
+     "rowsSha256": "966ce723cd01c12411860fb34ba634c183fa8bd32b0cf97d6c7170b9ee479c30",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr14 (AC_asj, AN_asj at 3287 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr14.vcf.bgz",
+     "indexSha256": "34be74142170db2d22fd16f55cb7370e971578e2bf56737f30b6aedee9bb1dae",
+     "rowsSha256": "c8eda3eca76d73127f8b18f537575387f1978ed8abf26848a80307ba0fcca7e5",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr15 (AC_asj, AN_asj at 3062 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr15.vcf.bgz",
+     "indexSha256": "9c0414bf543084cbb35288f7e5dc2ffcba4adf94094e1d8392367cfe0f1c020f",
+     "rowsSha256": "87ddda2ee14c3ffd64ed7800b0b4e34b32b93b24324ce653c6c2a9a40948ddab",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr16 (AC_asj, AN_asj at 3247 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr16.vcf.bgz",
+     "indexSha256": "4b841a17148a120e1830a94cb4e04288780f6166b24b17ed76f27b20d4fa8397",
+     "rowsSha256": "fd5dade9e4b1f4432fcc3f0d4511071d331cce9eee7097f3f7353742bc92ccf5",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr17 (AC_asj, AN_asj at 2896 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr17.vcf.bgz",
+     "indexSha256": "35d2f890ee67e2d15abb12328b31b45897536e92ced36b142f8316dc998a7540",
+     "rowsSha256": "e5f360ff8d061c4bcdc79a1a5b30de248677c097a85b6a9dafa2d1080e683696",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr18 (AC_asj, AN_asj at 3075 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr18.vcf.bgz",
+     "indexSha256": "a045cca8cf798762d596c5f16880df67eecc9b3c85cee94bc85bcf44f0374bc7",
+     "rowsSha256": "bdf87d8c5bd4a731cd3678cf29bfb2ae1f538c7ed1aae4e71a09d6d8e6e2335a",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr19 (AC_asj, AN_asj at 2165 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr19.vcf.bgz",
+     "indexSha256": "a2972274207efc02da309b504719a85b56c8f779ffcb9974d3ec554ce63d1ae4",
+     "rowsSha256": "c0e7a66d7b6bc800d38de7001ee2ac494e59a75e52599e9e99025c079518c570",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr20 (AC_asj, AN_asj at 2522 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr20.vcf.bgz",
+     "indexSha256": "6bc353d24267c3b20f044fae88c2c70525e943680fd542a2ba75c4cfd101c6be",
+     "rowsSha256": "e8dc5cb4e7c446c424f436bfa943dc1fb9cae40b08bb69ad56710c8e82d73538",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr21 (AC_asj, AN_asj at 1405 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr21.vcf.bgz",
+     "indexSha256": "81b15f7ea57b79f5f5391d09ea1800a9c7bd43e0c3e0366b83b15c6560cfa56f",
+     "rowsSha256": "41c2ed26f0c87c507015746b6da7a18a1be875e747c0148aa338ec25aed1f046",
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "gnomAD v4.1 genomes, sites, chr22 (AC_asj, AN_asj at 1461 positions, read by range request)",
+     "url": "https://gnomad-public-us-east-1.s3.amazonaws.com/release/4.1/vcf/genomes/gnomad.genomes.v4.1.sites.chr22.vcf.bgz",
+     "indexSha256": "fa08f41e5b1ac8c5edb5f6e806b2eb759fc20a14d0e553b4bf9238bf522b1b33",
+     "rowsSha256": "c481070794495bf7971432aaff4a5917f4c72bc6b2ad72705e4ba20220f14c46",
+     "retrieved": "2026-10-10"
+    }
+   ],
+   "counts": {
+    "1": {
+     "sites": 8202,
+     "found": 8202,
+     "absent": 0,
+     "filtered": 0
+    },
+    "2": {
+     "sites": 8303,
+     "found": 8303,
+     "absent": 0,
+     "filtered": 0
+    },
+    "3": {
+     "sites": 6864,
+     "found": 6864,
+     "absent": 0,
+     "filtered": 0
+    },
+    "4": {
+     "sites": 6101,
+     "found": 6101,
+     "absent": 0,
+     "filtered": 0
+    },
+    "5": {
+     "sites": 6078,
+     "found": 6078,
+     "absent": 0,
+     "filtered": 0
+    },
+    "6": {
+     "sites": 6844,
+     "found": 6844,
+     "absent": 0,
+     "filtered": 0
+    },
+    "7": {
+     "sites": 5506,
+     "found": 5506,
+     "absent": 0,
+     "filtered": 0
+    },
+    "8": {
+     "sites": 5241,
+     "found": 5241,
+     "absent": 0,
+     "filtered": 0
+    },
+    "9": {
+     "sites": 4506,
+     "found": 4506,
+     "absent": 0,
+     "filtered": 0
+    },
+    "10": {
+     "sites": 5355,
+     "found": 5355,
+     "absent": 0,
+     "filtered": 0
+    },
+    "11": {
+     "sites": 5117,
+     "found": 5117,
+     "absent": 0,
+     "filtered": 0
+    },
+    "12": {
+     "sites": 4940,
+     "found": 4940,
+     "absent": 0,
+     "filtered": 0
+    },
+    "13": {
+     "sites": 3823,
+     "found": 3823,
+     "absent": 0,
+     "filtered": 0
+    },
+    "14": {
+     "sites": 3287,
+     "found": 3287,
+     "absent": 0,
+     "filtered": 0
+    },
+    "15": {
+     "sites": 3062,
+     "found": 3062,
+     "absent": 0,
+     "filtered": 0
+    },
+    "16": {
+     "sites": 3247,
+     "found": 3247,
+     "absent": 0,
+     "filtered": 0
+    },
+    "17": {
+     "sites": 2896,
+     "found": 2896,
+     "absent": 0,
+     "filtered": 0
+    },
+    "18": {
+     "sites": 3075,
+     "found": 3075,
+     "absent": 0,
+     "filtered": 0
+    },
+    "19": {
+     "sites": 2165,
+     "found": 2165,
+     "absent": 0,
+     "filtered": 0
+    },
+    "20": {
+     "sites": 2522,
+     "found": 2521,
+     "absent": 0,
+     "filtered": 1
+    },
+    "21": {
+     "sites": 1405,
+     "found": 1405,
+     "absent": 0,
+     "filtered": 0
+    },
+    "22": {
+     "sites": 1461,
+     "found": 1461,
+     "absent": 0,
+     "filtered": 0
+    }
+   }
+  },
+  "chips": {
+   "arrays": [
+    {
+     "id": "GSA",
+     "name": "Infinium Global Screening Array-24 v3.0 (A1)",
+     "snps": 635851
+    },
+    {
+     "id": "OMNI",
+     "name": "Infinium OmniExpress-24 v1.3 (A1)",
+     "snps": 711123
+    }
+   ],
+   "union": 1171236,
+   "shared": 175408,
+   "placedDifferently": 0,
+   "build": 37,
+   "sources": [
+    {
+     "name": "Infinium Global Screening Array-24 v3.0 (A1): rsID mapping",
+     "url": "https://support.illumina.com/content/dam/illumina-support/documents/downloads/productfiles/global-screening-array-24/v3-0/infinium-global-screening-array-24-v3-0-a1-b151-rsids.zip",
+     "sha256": "d29731372f0a5719bca33b8ffbb02e2437981d16a9a55286687ec4b29d8af489",
+     "bytes": 3409873,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "Infinium Global Screening Array-24 v3.0 (A1): physical coordinates",
+     "url": "https://support.illumina.com/content/dam/illumina-support/documents/downloads/productfiles/global-screening-array-24/v3-0/infinium-global-screening-array-24-v3-0-a1-physical-genetic-coordinates.zip",
+     "sha256": "c854cc550b42dfed0f483e4a7dee0f2a0d99e163d4afe214733bf402f2391c08",
+     "bytes": 8260314,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "Infinium OmniExpress-24 v1.3 (A1): rsID mapping",
+     "url": "https://support.illumina.com/content/dam/illumina-support/documents/downloads/productfiles/humanomniexpress-24/v1-3/infinium-omniexpress-24-v1-3-a1-b150-rsids.zip",
+     "sha256": "20440eb8b2edb6393cd8c885d03ad33e3fa79f5377436a508ec4575eca27654f",
+     "bytes": 3366069,
+     "retrieved": "2026-10-10"
+    },
+    {
+     "name": "Infinium OmniExpress-24 v1.3 (A1): physical coordinates",
+     "url": "https://support.illumina.com/content/dam/illumina-support/documents/downloads/productfiles/humanomniexpress-24/v1-3/infinium-omniexpress-24-v1-3-a1-physical-genetic-coordinates.zip",
+     "sha256": "f8918790776bb88eb8fec8d8f9756e7fba0c0bdc762a08dc6543e640d78df31d",
+     "bytes": 8655458,
+     "retrieved": "2026-10-10"
+    }
+   ]
+  },
+  "liftover": {
+   "chain": {
+    "url": "https://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/hg19ToHg38.over.chain.gz",
+    "sha256": "5c0598e500ceb5a78c73086929e8ef993aec309bcafb595139b53d440b125a1d",
+    "bytes": 227698,
+    "retrieved": "2026-10-10"
+   },
+   "method": "pyliftover, hg19ToHg38; one hit on the same chromosome required",
+   "counts": {
+    "input": 1171236,
+    "lifted": 1170638,
+    "unmapped": 466,
+    "otherChromosome": 132,
+    "multiple": 0,
+    "minusStrand": 940
+   }
+  },
+  "script": "scripts/data/05-panel.py",
+  "generated": "2026-10-10",
+  "runtimeSeconds": 1045
+ },
+ "qc": {
+  "input": 983975,
+  "rare": 149584,
+  "kept": 834391,
+  "coreBothChips": 81028,
+  "coreGsaOnly": 18972,
+  "core": 100000,
+  "dense": 220001,
+  "genomes": 3458,
+  "ldPrune": {
+   "r2": 0.2,
+   "windowKb": 500,
+   "lastKept": 20,
+   "minMaf": 0.05
+  },
+  "chipCoverage": {
+   "GSA": {
+    "dense": 129249,
+    "core": 100000
+   },
+   "OmniExpress": {
+    "dense": 184736,
+    "core": 81028
+   }
+  }
+ },
+ "components": [
+  {
+   "id": "AFR",
+   "label": "Sub-Saharan African",
+   "reference": [
+    "BantuKenya",
+    "BantuSouthAfrica",
+    "BiakaPygmy",
+    "ESN",
+    "GWD",
+    "LWK",
+    "MSL",
+    "Mandenka",
+    "MbutiPygmy",
+    "San",
+    "YRI",
+    "Yoruba"
+   ],
+   "estimated": [
+    "ACB",
+    "ASW"
+   ],
+   "initialisedFrom": "YRI",
+   "alleles": 1561.0,
+   "populations": [
+    "ACB",
+    "BantuKenya",
+    "BantuSouthAfrica",
+    "BiakaPygmy",
+    "ESN",
+    "GWD",
+    "LWK",
+    "MSL",
+    "Mandenka",
+    "MbutiPygmy",
+    "San",
+    "YRI",
+    "Yoruba"
+   ]
+  },
+  {
+   "id": "EUR",
+   "label": "European",
+   "reference": [
+    "Adygei",
+    "Basque",
+    "CEU",
+    "FIN",
+    "French",
+    "GBR",
+    "IBS",
+    "Italian",
+    "Orcadian",
+    "Russian",
+    "Sardinian",
+    "TSI",
+    "Tuscan"
+   ],
+   "estimated": [],
+   "initialisedFrom": "CEU",
+   "alleles": 1652.5,
+   "populations": [
+    "Adygei",
+    "Basque",
+    "CEU",
+    "FIN",
+    "French",
+    "GBR",
+    "IBS",
+    "Italian",
+    "Orcadian",
+    "Russian",
+    "Sardinian",
+    "TSI",
+    "Tuscan"
+   ]
+  },
+  {
+   "id": "MID",
+   "label": "Middle Eastern & North African",
+   "reference": [
+    "Bedouin",
+    "Druze",
+    "Palestinian"
+   ],
+   "estimated": [
+    "Mozabite"
+   ],
+   "initialisedFrom": "Druze",
+   "alleles": 416.5,
+   "populations": [
+    "Bedouin",
+    "Druze",
+    "Palestinian"
+   ]
+  },
+  {
+   "id": "SAS",
+   "label": "Central & South Asian",
+   "reference": [
+    "BEB",
+    "Balochi",
+    "Brahui",
+    "Burusho",
+    "GIH",
+    "ITU",
+    "Kalash",
+    "PJL",
+    "Pathan",
+    "STU",
+    "Sindhi"
+   ],
+   "estimated": [
+    "Hazara",
+    "Makrani"
+   ],
+   "initialisedFrom": "GIH",
+   "alleles": 1348.8,
+   "populations": [
+    "BEB",
+    "Balochi",
+    "Brahui",
+    "Burusho",
+    "GIH",
+    "ITU",
+    "Kalash",
+    "PJL",
+    "Pathan",
+    "STU",
+    "Sindhi"
+   ]
+  },
+  {
+   "id": "EAS",
+   "label": "East Asian",
+   "reference": [
+    "CDX",
+    "CHB",
+    "CHS",
+    "Cambodian",
+    "Dai",
+    "Daur",
+    "Han",
+    "Hezhen",
+    "JPT",
+    "Japanese",
+    "KHV",
+    "Lahu",
+    "Miao",
+    "Mongola",
+    "Naxi",
+    "Oroqen",
+    "She",
+    "Tu",
+    "Tujia",
+    "Xibo",
+    "Yakut",
+    "Yi"
+   ],
+   "estimated": [
+    "Uygur"
+   ],
+   "initialisedFrom": "CHB",
+   "alleles": 1486.9,
+   "populations": [
+    "CDX",
+    "CHB",
+    "CHS",
+    "Cambodian",
+    "Dai",
+    "Daur",
+    "Han",
+    "Hezhen",
+    "JPT",
+    "Japanese",
+    "KHV",
+    "Lahu",
+    "Miao",
+    "Mongola",
+    "Naxi",
+    "Oroqen",
+    "She",
+    "Tu",
+    "Tujia",
+    "Xibo",
+    "Yakut",
+    "Yi"
+   ]
+  },
+  {
+   "id": "OCE",
+   "label": "Oceanian",
+   "reference": [
+    "Melanesian",
+    "Papuan"
+   ],
+   "estimated": [],
+   "initialisedFrom": "Papuan",
+   "alleles": 58.4,
+   "populations": [
+    "Melanesian",
+    "Papuan"
+   ]
+  },
+  {
+   "id": "NAT",
+   "label": "Indigenous American",
+   "reference": [
+    "Colombian",
+    "Karitiana",
+    "Maya",
+    "Pima",
+    "Surui"
+   ],
+   "estimated": [
+    "MXL",
+    "PUR",
+    "CLM",
+    "PEL"
+   ],
+   "initialisedFrom": "Karitiana",
+   "alleles": 391.7,
+   "populations": [
+    "Colombian",
+    "Karitiana",
+    "Maya",
+    "Pima",
+    "Surui"
+   ]
+  }
+ ],
+ "curation": {
+  "rule": "a reference genome is released from the reference set when, fitted freely, its share of its own continent is 15 points below its population's median or under half",
+  "released": {
+   "Yakut": 2,
+   "Maya": 1,
+   "Xibo": 1
+  }
+ },
+ "admixture": {
+  "mode": "supervised",
+  "estimated": [
+   "ACB",
+   "ASW",
+   "CLM",
+   "Hazara",
+   "MXL",
+   "Makrani",
+   "Mozabite",
+   "PEL",
+   "PUR",
+   "Uygur"
+  ],
+  "iterations": 114,
+  "logLikelihood": -98136597.68369965,
+  "lastProportionChange": 0.0003241598606109619,
+  "snps": 30000,
+  "meanProportions": {
+   "ACB": [
+    0.891,
+    0.0681,
+    0.0271,
+    0.0083,
+    0.0017,
+    0.0015,
+    0.0023
+   ],
+   "ASW": [
+    0.7913,
+    0.1427,
+    0.0352,
+    0.0126,
+    0.0035,
+    0.0027,
+    0.0121
+   ],
+   "BantuKenya": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "BantuSouthAfrica": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "BiakaPygmy": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "ESN": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "GWD": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "LWK": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "MSL": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Mandenka": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "MbutiPygmy": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "San": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "YRI": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Yoruba": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Adygei": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Basque": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "CEU": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "FIN": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "French": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "GBR": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "IBS": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Italian": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Orcadian": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Russian": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Sardinian": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "TSI": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Tuscan": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Bedouin": [
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Druze": [
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Mozabite": [
+    0.1725,
+    0.0995,
+    0.7252,
+    0.0006,
+    0.0009,
+    0.0012,
+    0.0001
+   ],
+   "Palestinian": [
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "BEB": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Balochi": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Brahui": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Burusho": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "GIH": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Hazara": [
+    0.0016,
+    0.2108,
+    0.0858,
+    0.2669,
+    0.3948,
+    0.0023,
+    0.0378
+   ],
+   "ITU": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Kalash": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Makrani": [
+    0.0181,
+    0.1076,
+    0.3336,
+    0.5399,
+    0.0,
+    0.0003,
+    0.0005
+   ],
+   "PJL": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Pathan": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "STU": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "Sindhi": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "CDX": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "CHB": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "CHS": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "Cambodian": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "Dai": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "Daur": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "Han": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "Hezhen": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "JPT": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "Japanese": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "KHV": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "Lahu": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "Miao": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "Mongola": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "Naxi": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "Oroqen": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "She": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "Tu": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "Tujia": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "Uygur": [
+    0.0004,
+    0.2332,
+    0.0659,
+    0.1874,
+    0.4644,
+    0.0047,
+    0.044
+   ],
+   "Xibo": [
+    0.0,
+    0.0196,
+    0.0032,
+    0.0032,
+    0.9707,
+    0.0001,
+    0.0031
+   ],
+   "Yakut": [
+    0.0003,
+    0.024,
+    0.0004,
+    0.0054,
+    0.9628,
+    0.0002,
+    0.0069
+   ],
+   "Yi": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "Melanesian": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0
+   ],
+   "Papuan": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0
+   ],
+   "CLM": [
+    0.0645,
+    0.5039,
+    0.147,
+    0.0099,
+    0.0035,
+    0.0018,
+    0.2693
+   ],
+   "Colombian": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "Karitiana": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "MXL": [
+    0.0266,
+    0.3298,
+    0.1168,
+    0.0185,
+    0.0167,
+    0.0036,
+    0.4879
+   ],
+   "Maya": [
+    0.0012,
+    0.0068,
+    0.005,
+    0.0005,
+    0.0008,
+    0.0,
+    0.9857
+   ],
+   "PEL": [
+    0.0229,
+    0.1146,
+    0.0533,
+    0.0105,
+    0.0108,
+    0.0018,
+    0.7861
+   ],
+   "PUR": [
+    0.124,
+    0.5405,
+    0.1849,
+    0.0087,
+    0.0027,
+    0.0026,
+    0.1366
+   ],
+   "Pima": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "Surui": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  }
+ },
+ "pca": {
+  "varianceExplained": [
+   0.06338057951937628,
+   0.03987332896723996,
+   0.011337093964956826,
+   0.008606207243563013,
+   0.0035195419389427835,
+   0.0020545685682099193
+  ],
+  "shrinkage": [
+   0.9923074608763647,
+   0.9926583051993152,
+   0.9724721762484506,
+   0.9646720439306795,
+   0.8989492043200096,
+   0.7654525993400872
+  ],
+  "spikes": [
+   6338.057951937629,
+   3987.3328967239963,
+   1133.7093964956825,
+   860.6207243563013,
+   351.9541938942784,
+   205.45685682099193
+  ],
+  "gamma": 28.91844997108155,
+  "folds": 5
+ },
+ "similarityValidation": {},
+ "notes": {
+  "referenceName": "gnomAD HGDP+1KG",
+  "genomes": 3458,
+  "components": "Each thin column is one reference genome, coloured by its share of each of the 7 continental components. Genomes of the reference populations define their continent's component, so they are single-coloured by construction; the admixed populations (ACB, ASW, CLM, Hazara, MXL, Makrani, Mozabite, PEL, PUR, Uygur) were estimated. The Indigenous American component is defined by HGDP's unadmixed genomes (Karitiana, Surui, Maya, Pima, Colombian). Within the continents, 18 regional reference groups are fitted separately; a region is shown only where validation supports it.",
+  "limitations": [
+   "The Ashkenazi Jewish reference exists only as allele frequencies (gnomAD); other Jewish populations, Arabia outside the Bedouin, the Caucasus beyond the Adygei, Central Asia beyond Pakistan and Xinjiang, Polynesia and Micronesia, and Indigenous North America beyond Mexico have no reference. Ancestry from those places is described in terms of the populations that are present.",
+   "Some reference groups are small (San 6, Surui 4, Colombian 7): their frequencies carry that uncertainty into every interval.",
+   "Several 1000 Genomes populations were sampled away from their ancestral region (Utah, Houston, Los Angeles, the south-western US, Barbados, the UK). The map marks them with hollow points."
+  ]
+ }
+}
