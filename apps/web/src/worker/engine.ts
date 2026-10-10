@@ -5,12 +5,12 @@
  * the same origin.
  */
 import {
-  AUTOSOMES, DEFAULT_RELATIONSHIPS, GRCH37_LENGTH, Kit, ReportBuilder, callTraits, compareKits, componentAdmixture,
-  decodeReferencePanel, geneticMapFromCompact, inferSex, makeDemoFamily, overlapClusters, paintChromosomes, panelGenotypes,
+  AUTOSOMES, DEFAULT_RELATIONSHIPS, GRCH37_LENGTH, Kit, ReportBuilder, ancestryTree, applyGroupSizes, attachTier, callTraits, compareKits, componentAdmixture,
+  decodePanelTier, decodeReferencePanel, detectBuild, geneticMapFromCompact, inferSex, makeDemoFamily, overlapClusters, paintChromosomes, panelGenotypes,
   parseRawKit, parseSegmentTable, populationSimilarity, projectPca, relationshipPosteriors, runsOfHomozygosity, simulatePairSegments,
   summariseKit, summariseMatches, mulberry32, openRawText,
   type CompactGeneticMap, type InterpolatedGeneticMap, type PanelGenotypes, type ReferencePanelData, type RelationshipDistribution,
-  type RelationshipSpec, type SimulatedPair, type DemoTraitSite,
+  type RelationshipSpec, type SimulatedPair, type DemoTraitSite, type Calibration,
 } from "@lineage/core";
 import { TRAITS } from "@lineage/kb";
 import type {
@@ -34,7 +34,8 @@ let mapPromise: Promise<InterpolatedGeneticMap> | undefined;
 let panelPromise: Promise<{ panel: ReferencePanelData; meta: PanelMeta }> | undefined;
 let simPromise: Promise<RelationshipDistribution[]> | undefined;
 
-interface PanelMeta { admixture: { meanProportions: Record<string, number[]> } }
+interface PanelMeta { admixture: { meanProportions: Record<string, number[]> }; /** The validation's calibration file, once one exists. */ calibration?: string }
+interface PopulationsJson { populations: Array<{ code: string; samples: number }> }
 
 async function json<T>(name: string): Promise<T> {
   const r = await fetch(dataBase + name);
@@ -42,18 +43,39 @@ async function json<T>(name: string): Promise<T> {
   return (await r.json()) as T;
 }
 const geneticMap = () => (mapPromise ??= json<CompactGeneticMap>("genetic-map.grch37.json").then((j) => geneticMapFromCompact(j)));
-const referencePanel = () => (panelPromise ??= (async () => {
-  const r = await fetch(dataBase + "panel.1000g.bin.gz");
-  if (!r.ok) throw new Error(`Could not load the reference panel (${r.status})`);
-  // The file is stored gzipped. Decompress it here, unless the server already sent it with a
-  // gzip Content-Encoding and the browser undid that on the way in (then it starts "LNGP").
+/** Fetch a gzipped binary reference file (or one the server already un-gzipped on the way in). */
+async function gunzipped(name: string): Promise<ArrayBuffer> {
+  const r = await fetch(dataBase + name);
+  if (!r.ok) throw new Error(`Could not load ${name} (${r.status})`);
   const raw = new Uint8Array(await r.arrayBuffer());
-  const buf = raw[0] === 0x1f && raw[1] === 0x8b
+  return raw[0] === 0x1f && raw[1] === 0x8b
     ? await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer()
     : raw.buffer;
-  const [panel, meta] = [decodeReferencePanel(buf), await json<PanelMeta>("panel.1000g.json")];
+}
+const referencePanel = () => (panelPromise ??= (async () => {
+  const [panel, meta] = [decodeReferencePanel(await gunzipped("panel.1000g.bin.gz")), await json<PanelMeta>("panel.1000g.json")];
+  // A version-1 panel carries no sample sizes: take them from the population table and the fitted
+  // proportions, so each frequency's sampling error enters the likelihood.
+  if (panel.header.version === 1) {
+    const pops = await json<PopulationsJson>("populations.json");
+    applyGroupSizes(panel, Object.fromEntries(pops.populations.map((p) => [p.code, p.samples])), meta.admixture.meanProportions);
+  }
   return { panel, meta };
 })());
+/** The validation's calibration; the engine runs uncalibrated (and says so) when it is missing. */
+let calPromise: Promise<Calibration | undefined> | undefined;
+const calibration = () => (calPromise ??= referencePanel().then(({ meta }) => (meta.calibration ? json<Calibration>(meta.calibration) : undefined)));
+/** Tier files are loaded once each, only for continents a person carries. */
+const tierLoads = new Map<string, Promise<void>>();
+function loadTier(panel: ReferencePanelData, continent: string): Promise<void> {
+  const t = panel.header.tiers?.find((x) => x.continent === continent);
+  if (!t) return Promise.resolve();
+  let p = tierLoads.get(continent);
+  if (!p) { p = gunzipped(t.file).then((buf) => attachTier(panel, decodePanelTier(buf))); tierLoads.set(continent, p); }
+  return p;
+}
+/** Share of a continent above which its regional tier is worth loading. */
+const TIER_SHARE = 0.02;
 interface SimJson { relationships: Array<RelationshipSpec & { totalCm: number[]; segments: number[]; longestCm: number[]; fullCm: number[]; summary: RelationshipDistribution["summary"]; sharedCmV4?: { average: number; min: number; max: number } }> }
 let simRaw: SimJson | undefined;
 const distributions = () => (simPromise ??= json<SimJson>("relationships.sim.json").then((j) => {
@@ -172,23 +194,37 @@ const handlers: { [M in Method]: Handler<M> } = {
     if (!entry) throw new Error("Load a raw data file first.");
     if (entry.ancestry) return entry.ancestry;
     progress("Loading the reference panel", 0.1);
-    const [{ panel }, map] = await Promise.all([referencePanel(), geneticMap()]);
+    const [{ panel }, map, cal] = await Promise.all([referencePanel(), geneticMap(), calibration()]);
     const t0 = performance.now();
-    progress("Matching your SNPs to the panel", 0.3);
-    const g = entry.genotypes ?? panelGenotypes(entry.kit, panel);
+    progress("Matching your SNPs to the panel", 0.25);
+    const build = detectBuild(entry.kit, panel);
+    const g = entry.genotypes ?? panelGenotypes(entry.kit, panel, { build: build.build === 38 ? 38 : 37 });
     entry.genotypes = g;
-    progress("Comparing with 26 populations", 0.45);
-    const similarity = populationSimilarity(panel, g);
-    progress("Estimating continental components", 0.6);
-    const admixture = componentAdmixture(panel, g);
-    progress("Projecting onto the reference PCA", 0.75);
-    const pca = projectPca(panel, g);
-    progress("Painting chromosomes", 0.85);
-    const painting = paintChromosomes(panel, g, admixture.proportions, map);
+    progress("Estimating continental components", 0.4);
+    const admixture = componentAdmixture(panel, g, { calibration: cal });
+    progress("Painting chromosomes", 0.55);
+    const painting = paintChromosomes(panel, g, admixture.proportions, map, { calibration: cal });
+    progress("Projecting onto the reference PCA", 0.65);
+    const pca = projectPca(panel, g, { map, replicates: 200 });
+    // Regional detail: load the tiers of the continents this genome carries, then refit.
+    const carried = admixture.components.filter((_, k) => admixture.proportions[k]! >= TIER_SHARE && panel.header.tiers?.some((t) => t.continent === admixture.components[k]));
+    let regional: AncestryResult["regional"];
+    if (carried.length) {
+      progress("Loading regional reference data", 0.75);
+      await Promise.all(carried.map((c) => loadTier(panel, c)));
+      progress("Estimating regional components", 0.82);
+      regional = componentAdmixture(panel, g, { calibration: cal, level: "region" });
+    }
+    progress("Comparing with the reference populations", 0.92);
+    const similarity = populationSimilarity(panel, g, { calibration: cal });
+    const labels = Object.fromEntries(panel.header.components.map((c) => [c.id, c.label]));
+    const frequencyOnly = Object.fromEntries(panel.tiers.flatMap((t) => t.header.components.filter((c) => c.frequencyOnly).map((c) => [c.id, true])));
     entry.ancestry = {
-      components: panel.header.components, populations: panel.header.populations,
-      coverage: { called: g.called, total: panel.header.nSnp, strandFlipped: g.strandFlipped, alleleMismatch: g.alleleMismatch, notOnChip: g.notOnChip, noCall: g.noCall, perChromosome: g.perChromosome },
-      similarity, admixture, pca, painting, ms: performance.now() - t0,
+      components: panel.header.components, populations: similarity.scores.map((s) => s.population),
+      coverage: { called: g.called, total: panel.header.nSnp, strandFlipped: g.strandFlipped, alleleMismatch: g.alleleMismatch, notOnChip: g.notOnChip, noCall: g.noCall, conflicting: g.conflicting, perChromosome: g.perChromosome },
+      build, similarity, admixture, regional, tree: ancestryTree(regional ?? admixture, { labels, frequencyOnly }), pca, painting,
+      calibration: { loaded: !!cal, generated: cal?.generated, windowZ: cal?.painting?.windowZ, conformalCoverage: cal?.similarity?.coverage, intervalCoverage: cal?.components?.coverage }, tiers: panel.tiers.map((t) => t.header.continent),
+      ms: performance.now() - t0,
     };
     return entry.ancestry;
   },
@@ -266,7 +302,7 @@ const handlers: { [M in Method]: Handler<M> } = {
       const a = entry.ancestry;
       const top = [...a.similarity.scores].sort((x, y) => x.rank - y.rank).slice(0, 3);
       b.fact("similarity", `Of the 26 reference populations of 1000 Genomes phase 3, the genotypes are most similar to ${top.map((t) => t.population).join(", then ")} (log-likelihood over ${a.similarity.snps.toLocaleString()} LD-pruned SNPs).`, { value: top, evidence: "Hardy-Weinberg likelihood under each population's allele frequencies", source: "1000 Genomes Project phase 3 (2015)", confidence: a.similarity.snps > 5000 ? "probable" : "suggestive" });
-      b.fact("admixture", `Continental components: ${a.admixture.components.map((c, i) => `${c} ${(a.admixture.proportions[i]! * 100).toFixed(1)}% (95% interval ${(a.admixture.ci95[i]![0] * 100).toFixed(0)}-${(a.admixture.ci95[i]![1] * 100).toFixed(0)}%)`).join(", ")}.`, { value: a.admixture, evidence: `EM with fixed component frequencies over ${a.admixture.snpsUsed.toLocaleString()} SNPs; block bootstrap`, source: "Components defined on 1000 Genomes phase 3 by ADMIXTURE's supervised mode (Alexander et al. 2009): 20 reference populations fixed, the Indigenous American component learned from six admixed populations", confidence: a.admixture.snpsUsed > 5000 ? "probable" : "suggestive" });
+      b.fact("admixture", `Continental components: ${a.admixture.components.map((c, i) => `${c} ${(a.admixture.proportions[i]! * 100).toFixed(1)}% (95% interval ${(a.admixture.ci95[i]![0] * 100).toFixed(1)}-${(a.admixture.ci95[i]![1] * 100).toFixed(1)}%)`).join(", ")}.`, { value: a.admixture, evidence: `EM with fixed component frequencies over ${a.admixture.snpsUsed.toLocaleString()} SNPs, the reference frequencies' sampling error integrated; 95% profile-likelihood intervals${a.calibration.loaded ? " with the validated inflation factor" : " (uncalibrated)"}`, source: "Components defined on 1000 Genomes phase 3 by ADMIXTURE's supervised mode (Alexander et al. 2009): 20 reference populations fixed, the Indigenous American component learned from six admixed populations", confidence: a.admixture.snpsUsed > 5000 ? "probable" : "suggestive" });
       b.limitation("Ancestry results describe genetic similarity to reference samples, not ethnicity, nationality or identity. Populations absent from the reference panel are described in terms of the ones present.");
     }
     return b.build();

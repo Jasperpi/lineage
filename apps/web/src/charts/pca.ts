@@ -1,7 +1,8 @@
 /**
  * The reference PCA: every 1000 Genomes phase 3 genome as a dot, coloured by
  * its continental group, population codes at their centroids, and the user
- * (projected by least squares, corrected for shrinkage) as a labelled ring.
+ * (projected by least squares, corrected for shrinkage) as a labelled ring,
+ * with the 95% ellipse of its bootstrap covariance when there is one.
  */
 import { s, h, tip } from "../lib/dom.js";
 import type { ReferenceSamplesFile, Population } from "../lib/reference.js";
@@ -14,6 +15,8 @@ export interface PcaOpts {
   pcX: number;
   pcY: number;
   you?: number[];
+  /** Covariance of the user's scores (nPc x nPc), for a 95% ellipse. */
+  youCov?: number[][];
   youLabel?: string;
   variance?: number[];
 }
@@ -49,7 +52,9 @@ export function pcaScatter(o: PcaOpts): SVGSVGElement {
     const ux = px(o.you[o.pcX]!), uy = py(o.you[o.pcY]!);
     const text = o.youLabel ?? "You";
     placed.push([ux - 12, uy - 12, ux + 12, uy + 12], [ux + 13, uy - 23, ux + 17 + text.length * 8, uy - 5]);
+    const ell = o.youCov ? ellipse(o.you[o.pcX]!, o.you[o.pcY]!, o.youCov, o.pcX, o.pcY) : undefined;
     you = [
+      ...(ell ? [s("path", { d: ell.map(([x, y], i) => `${i ? "L" : "M"}${px(x).toFixed(1)},${py(y).toFixed(1)}`).join("") + "Z", fill: "var(--ink)", "fill-opacity": 0.08, stroke: "var(--ink)", "stroke-width": 1, "stroke-dasharray": "3 3" })] : []),
       s("circle", { cx: ux, cy: uy, r: 11, fill: "none", stroke: "var(--ink)", "stroke-width": 2.2 }),
       s("circle", { cx: ux, cy: uy, r: 3.5, fill: "var(--ink)" }),
       s("text", { x: ux + 15, y: uy - 10, class: "lbl-strong", "paint-order": "stroke", stroke: "var(--card)", "stroke-width": 4, "stroke-linejoin": "round" }, text)];
@@ -84,6 +89,20 @@ export function pcaScatter(o: PcaOpts): SVGSVGElement {
   });
   svg.append(hit);
   return svg;
+}
+
+/** Points on the 95% ellipse of a bivariate normal (chi-square(2) 95% point 5.991). */
+function ellipse(mx: number, my: number, cov: number[][], i: number, j: number): Array<[number, number]> | undefined {
+  const a = cov[i]?.[i], b = cov[i]?.[j], c = cov[j]?.[j];
+  if (a === undefined || b === undefined || c === undefined || !(a >= 0) || !(c >= 0)) return undefined;
+  const tr = a + c, det = a * c - b * b, disc = Math.sqrt(Math.max(0, (tr * tr) / 4 - det));
+  const l1 = tr / 2 + disc, l2 = Math.max(0, tr / 2 - disc);
+  const theta = Math.abs(b) < 1e-15 ? (a >= c ? 0 : Math.PI / 2) : Math.atan2(l1 - a, b);
+  const r1 = Math.sqrt(5.991 * l1), r2 = Math.sqrt(5.991 * l2);
+  return Array.from({ length: 48 }, (_, k) => {
+    const t = (2 * Math.PI * k) / 48, x = r1 * Math.cos(t), y = r2 * Math.sin(t);
+    return [mx + x * Math.cos(theta) - y * Math.sin(theta), my + x * Math.sin(theta) + y * Math.cos(theta)] as [number, number];
+  });
 }
 
 function extent(v: number[]): [number, number] {

@@ -1,0 +1,50 @@
+{
+  "note": "Which reference populations define each component. Continents are fitted on the dense SNPs (painting, continental shares); regions on the core SNPs (regional shares). A population listed under a continent's `estimated` is admixed across continents and is fitted, not fixed. Regions that cannot reach 90% held-out precision are never shown on their own (the calibration holds their precision); they are listed here so the validation can measure them.",
+  "gnomadRegion": { "AFR": "AFR", "EUR": "EUR", "MID": "MID", "CSA": "SAS", "EAS": "EAS", "OCE": "OCE", "AMR": "NAT" },
+  "continents": [
+    { "id": "AFR", "label": "Sub-Saharan African", "start": "YRI", "estimated": ["ACB", "ASW"],
+      "regions": [
+        { "id": "WAF", "label": "West African", "populations": ["YRI", "ESN", "GWD", "MSL", "Mandenka", "Yoruba"] },
+        { "id": "EAF", "label": "East African", "populations": ["LWK", "BantuKenya"] },
+        { "id": "CAF", "label": "Central African forager", "populations": ["BiakaPygmy", "MbutiPygmy"] },
+        { "id": "SAF", "label": "Southern African", "populations": ["San", "BantuSouthAfrica"] } ] },
+    { "id": "EUR", "label": "European", "start": "CEU", "estimated": [],
+      "regions": [
+        { "id": "NWE", "label": "North-western European", "populations": ["CEU", "GBR", "French", "Orcadian"] },
+        { "id": "SEU", "label": "Southern European", "populations": ["TSI", "IBS", "Italian", "Tuscan", "Sardinian", "Basque"] },
+        { "id": "FIN", "label": "Finnish", "populations": ["FIN"] },
+        { "id": "EEU", "label": "Eastern European", "populations": ["Russian"] },
+        { "id": "CAU", "label": "North Caucasian", "populations": ["Adygei"] },
+        { "id": "ASJ", "label": "Ashkenazi Jewish", "populations": [], "frequencyOnly": "gnomad-asj" } ] },
+    { "id": "MID", "label": "Middle Eastern & North African", "start": "Druze", "estimated": ["Mozabite"],
+      "regions": [
+        { "id": "LEV", "label": "Levantine", "populations": ["Druze", "Palestinian"] },
+        { "id": "BED", "label": "Bedouin", "populations": ["Bedouin"] },
+        { "id": "NAF", "label": "North African", "populations": ["Mozabite"] } ] },
+    { "id": "SAS", "label": "Central & South Asian", "start": "GIH", "estimated": ["Hazara", "Makrani"],
+      "regions": [
+        { "id": "SOA", "label": "South Asian", "populations": ["GIH", "PJL", "BEB", "STU", "ITU"] },
+        { "id": "IND", "label": "Indus valley & Balochistan", "populations": ["Balochi", "Brahui", "Sindhi", "Pathan", "Burusho"] } ] },
+    { "id": "EAS", "label": "East Asian", "start": "CHB", "estimated": ["Uygur"],
+      "regions": [
+        { "id": "NEA", "label": "North-east Asian", "populations": ["CHB", "JPT", "Japanese", "Han", "Daur", "Hezhen", "Mongola", "Oroqen", "Tu", "Xibo"] },
+        { "id": "SEA", "label": "Southern Chinese & South-east Asian", "populations": ["CHS", "CDX", "KHV", "Cambodian", "Dai", "Lahu", "Miao", "Naxi", "She", "Tujia", "Yi"] },
+        { "id": "SIB", "label": "Siberian", "populations": ["Yakut"] } ] },
+    { "id": "OCE", "label": "Oceanian", "start": "Papuan", "estimated": [], "regions": [] },
+    { "id": "NAT", "label": "Indigenous American", "start": "Karitiana", "estimated": ["MXL", "PUR", "CLM", "PEL"], "regions": [] }
+  ],
+  "hgdp": {
+    "Adygei": ["Adygei", "Russia (Caucasus)"], "Basque": ["Basque", "France"], "French": ["French", "France"], "Italian": ["Bergamo Italian", "Italy (Bergamo)"],
+    "Orcadian": ["Orcadian", "Orkney, United Kingdom"], "Russian": ["Russian", "Russia"], "Sardinian": ["Sardinian", "Italy (Sardinia)"], "Tuscan": ["Tuscan", "Italy (Tuscany)"],
+    "Bedouin": ["Bedouin", "Israel (Negev)"], "Druze": ["Druze", "Israel (Carmel)"], "Palestinian": ["Palestinian", "Israel (Central)"], "Mozabite": ["Mozabite", "Algeria (Mzab)"],
+    "Balochi": ["Balochi", "Pakistan"], "Brahui": ["Brahui", "Pakistan"], "Burusho": ["Burusho", "Pakistan"], "Hazara": ["Hazara", "Pakistan"], "Kalash": ["Kalash", "Pakistan"],
+    "Makrani": ["Makrani", "Pakistan"], "Pathan": ["Pathan", "Pakistan"], "Sindhi": ["Sindhi", "Pakistan"], "Uygur": ["Uygur", "China (Xinjiang)"],
+    "Cambodian": ["Cambodian", "Cambodia"], "Dai": ["Dai", "China"], "Daur": ["Daur", "China"], "Han": ["Han", "China"], "Hezhen": ["Hezhen", "China"], "Japanese": ["Japanese", "Japan"],
+    "Lahu": ["Lahu", "China"], "Miao": ["Miao", "China"], "Mongola": ["Mongolian", "China"], "Naxi": ["Naxi", "China"], "Oroqen": ["Oroqen", "China"], "She": ["She", "China"],
+    "Tu": ["Tu", "China"], "Tujia": ["Tujia", "China"], "Xibo": ["Xibo", "China"], "Yakut": ["Yakut", "Russia (Siberia)"], "Yi": ["Yi", "China"],
+    "BantuKenya": ["Bantu (Kenya)", "Kenya"], "BantuSouthAfrica": ["Bantu (South Africa)", "South Africa"], "BiakaPygmy": ["Biaka", "Central African Republic"], "MbutiPygmy": ["Mbuti", "Democratic Republic of the Congo"],
+    "Mandenka": ["Mandenka", "Senegal"], "San": ["San", "Namibia"], "Yoruba": ["Yoruba", "Nigeria"],
+    "Colombian": ["Colombian (Indigenous)", "Colombia"], "Karitiana": ["Karitiana", "Brazil"], "Surui": ["Surui", "Brazil"], "Maya": ["Maya", "Mexico"], "Pima": ["Pima", "Mexico"],
+    "Papuan": ["Papuan", "Papua New Guinea"], "Melanesian": ["Bougainville", "Papua New Guinea (Bougainville)"]
+  }
+}

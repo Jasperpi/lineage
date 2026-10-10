@@ -1,0 +1,155 @@
+# Rebuilds Lineage's reference data (data/reference) from public releases and
+# validates the ancestry engine against genomes held out of it.
+#
+# Runs when the branch `data-build` is pushed, or by hand. Nothing here touches
+# anyone's DNA: every input is a public dataset (Illumina chip manifests, the
+# gnomAD HGDP+1KG callset, gnomAD v4.1 allele counts), and every download's
+# SHA-256 is recorded in the outputs. The finished files are uploaded as an
+# artifact and committed to the branch `data-build-output` with a manifest of
+# their checksums, for review before they are copied into data/reference.
+name: reference data
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [data-build]
+
+permissions:
+  contents: write
+
+env:
+  LINEAGE_CACHE: ${{ github.workspace }}/data/.cache
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install numpy pysam pyliftover
+      - name: Chip SNPs, GRCh38 positions, samples and populations
+        run: |
+          mkdir -p "$LINEAGE_CACHE"
+          node scripts/data/02-chip-snps.mjs
+          python scripts/data/02b-liftover.py
+          node scripts/data/04-populations.mjs
+          LINEAGE_OUT="$LINEAGE_CACHE" python scripts/data/04b-populations.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prepare
+          path: |
+            data/.cache/chip-snps.tsv
+            data/.cache/chip-snps.json
+            data/.cache/chip-snps.b38.tsv
+            data/.cache/chip-snps.b38.json
+            data/.cache/samples.tsv
+            data/.cache/populations.json
+
+  extract:
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        chrom: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install numpy pysam
+      - uses: actions/download-artifact@v4
+        with: { name: prepare, path: data/.cache }
+      - name: Phased genotypes at the chip SNPs
+        run: python scripts/data/03-hgdp1kg.py --chrom ${{ matrix.chrom }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hgdp1kg-${{ matrix.chrom }}
+          path: data/.cache/hgdp1kg.chr${{ matrix.chrom }}.*
+          compression-level: 0
+
+  select:
+    needs: extract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install numpy
+      - uses: actions/download-artifact@v4
+        with: { merge-multiple: true, path: data/.cache }
+      - name: Choose the dense and core SNPs (without the held-out genomes)
+        run: python scripts/data/05-panel.py --stage select
+      - uses: actions/upload-artifact@v4
+        with:
+          name: selection
+          path: |
+            data/.cache/selection.npz
+            data/.cache/selection.json
+            data/.cache/core.b38.tsv
+
+  ashkenazi:
+    needs: select
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        chrom: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install pysam
+      - uses: actions/download-artifact@v4
+        with: { merge-multiple: true, pattern: "{selection,prepare}", path: data/.cache }
+      - name: gnomAD Ashkenazi allele counts at the core SNPs
+        run: python scripts/data/03b-gnomad-asj.py --chrom ${{ matrix.chrom }} --jobs 16
+      - uses: actions/upload-artifact@v4
+        with:
+          name: asj-${{ matrix.chrom }}
+          path: data/.cache/asj.chr${{ matrix.chrom }}.*
+
+  build:
+    needs: ashkenazi
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install numpy
+      - uses: actions/download-artifact@v4
+        with: { merge-multiple: true, path: data/.cache }
+      - run: npm ci && npm run build --workspace=packages/core
+      - name: Validation build (a fifth of each population held out)
+        run: python scripts/data/05-panel.py --stage build --holdout
+      - name: Validate and calibrate on the held-out genomes
+        run: |
+          for s in 0 1 2 3; do node --max-old-space-size=3500 scripts/data/08-validate.mjs run --dir data/.cache/validation --shard $s/4 & done
+          wait
+          mkdir -p out && cp data/.cache/populations.json out/
+          node scripts/data/08-validate.mjs merge --dir data/.cache/validation --out out
+      - name: The panel that ships (every genome)
+        run: python scripts/data/05-panel.py --stage build --out out
+      - name: Checksums
+        run: |
+          cp data/.cache/validation/panel.json out/validation-build.panel.json
+          cd out && sha256sum * > SHA256SUMS && cat SHA256SUMS && du -sh .
+      - uses: actions/upload-artifact@v4
+        with: { name: reference-data, path: out }
+      - name: Commit the outputs to data-build-output
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan data-build-output
+          git rm -rfq --cached .
+          mkdir -p /tmp/keep && cp -r out /tmp/keep/
+          git clean -fdxq
+          cp -r /tmp/keep/out ./reference
+          git add reference
+          git commit -qm "Reference data built from ${GITHUB_SHA} (run ${GITHUB_RUN_ID})"
+          git push -f origin data-build-output

@@ -27,7 +27,7 @@ import { Kit, type Variant } from "../kit/kit.js";
 import { mulberry32 } from "../util/random.js";
 import type { GeneticMap } from "../compare/geneticmap.js";
 import { compareKits } from "../compare/hir.js";
-import { BASE_CODES, type ReferencePanelData } from "../ancestry/reference.js";
+import { BASE_CODES, type ReferencePanelData, compScale, popScale } from "../ancestry/reference.js";
 import { DEFAULT_RELATIONSHIPS, simulatePairSegments } from "../relationship/simulate.js";
 import type { MatchSegment } from "../segments/parse.js";
 
@@ -114,7 +114,8 @@ export interface DemoInputs {
 export function makeDemoFamily(input: DemoInputs): DemoFamily {
   const { panel, map } = input;
   const rng = mulberry32(input.seed ?? 1995);
-  const N = panel.header.nSnp, K = panel.header.components.length, P = panel.header.populations.length, scale = panel.header.freqScale;
+  const N = panel.header.nSnp, K = panel.header.components.length;
+  const cScale = panel.header.components.map((_, c) => compScale(panel, c));
   const denseToCore = new Int32Array(N).fill(-1);
   panel.coreIndex.forEach((i, k) => { denseToCore[i] = k; });
   const cm = new Float64Array(N);
@@ -125,17 +126,26 @@ export function makeDemoFamily(input: DemoInputs): DemoFamily {
   const X_SITES = 2000;
   const xFreq = Float64Array.from({ length: X_SITES }, () => 0.15 + 0.7 * rng());
 
-  const founder = (pop: string, sex: "M" | "F"): Genome => {
+  /** A population's frequency at core SNP k, from the core file or an attached tier. */
+  const popFreqOf = (pop: string): ((k: number) => number) => {
     const p = panel.header.populations.indexOf(pop);
-    if (p < 0) throw new Error(`Unknown population ${pop}`);
+    if (p >= 0) { const P = panel.header.populations.length, sc = popScale(panel, p); return (k) => panel.popFreq[k * P + p]! / sc; }
+    for (const t of panel.tiers) {
+      const j = t.header.populations.indexOf(pop);
+      if (j >= 0) { const Q = t.header.populations.length, sc = t.header.popScale[j]!; return (k) => t.popFreq[k * Q + j]! / sc; }
+    }
+    throw new Error(`Unknown population ${pop}`);
+  };
+  const founder = (pop: string, sex: "M" | "F"): Genome => {
+    const freqAt = popFreqOf(pop);
     const q = input.meanProportions[pop] ?? new Array(K).fill(1 / K);
     const hap = () => {
       const h = new Uint8Array(N);
       for (let i = 0; i < N; i++) {
         const k = denseToCore[i]!;
         let f: number;
-        if (k >= 0) f = panel.popFreq[k * P + p]! / scale;
-        else { f = 0; for (let c = 0; c < K; c++) f += q[c]! * (panel.compFreq[i * K + c]! / scale); }
+        if (k >= 0) f = freqAt(k);
+        else { f = 0; for (let c = 0; c < K; c++) f += q[c]! * (panel.compFreq[i * K + c]! / cScale[c]!); }
         h[i] = rng() < f ? 1 : 0;
       }
       return h;

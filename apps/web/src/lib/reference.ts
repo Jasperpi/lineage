@@ -16,6 +16,8 @@ export interface PanelMetaFile {
   admixture: { mode?: string; estimated?: string[]; iterations: number; logLikelihood: number; meanProportions: Record<string, number[]> };
   pca: { varianceExplained: number[]; shrinkage: number[]; folds: number };
   similarityValidation: Record<string, { samples: number; ownFirst: number; sameContinentFirst: number; mostCommonOther: string | null }>;
+  /** Version 2 panels: what the reference cannot describe, and how the components were made, in the page's words. */
+  notes?: { limitations?: string[]; components?: string; referenceName?: string; genomes?: number };
 }
 export interface ReferenceSamplesFile { populations: string[]; components: string[]; pop: number[]; q: number[][]; pcs: number[][] }
 export interface SimSummaryFile {

@@ -5,7 +5,7 @@
  * step of its continent's hue, and charts always label populations directly
  * rather than relying on colour alone.
  */
-export const COMPONENT_VAR: Record<string, string> = { AFR: "--c-AFR", EUR: "--c-EUR", EAS: "--c-EAS", SAS: "--c-SAS", NAT: "--c-NAT", AMR: "--c-AMR" };
+export const COMPONENT_VAR: Record<string, string> = { AFR: "--c-AFR", EUR: "--c-EUR", EAS: "--c-EAS", SAS: "--c-SAS", NAT: "--c-NAT", AMR: "--c-AMR", MID: "--c-MID", OCE: "--c-OCE", CSA: "--c-SAS" };
 
 export function cssVar(name: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || "#888";

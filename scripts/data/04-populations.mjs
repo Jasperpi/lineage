@@ -67,7 +67,8 @@ const populations = POPS.map((code) => {
   };
 });
 
-writeJson(`${REFERENCE}/populations.json`, {
+// Step 4b merges this with the HGDP populations into data/reference/populations.json.
+writeJson(`${CACHE}/populations.1000g.json`, {
   id: "populations.1000g-phase3",
   title: "1000 Genomes Project phase 3 populations",
   provenance: {

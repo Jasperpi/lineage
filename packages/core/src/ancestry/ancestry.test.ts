@@ -100,20 +100,21 @@ describe("ancestry analyses", () => {
   });
 
   it("recovers admixture proportions with intervals that contain them", () => {
-    const a = componentAdmixture(panel, mixed, { replicates: 30 });
+    const a = componentAdmixture(panel, mixed);
     expect(a.proportions[0]).toBeGreaterThan(0.42);
     expect(a.proportions[0]).toBeLessThan(0.58);
     expect(a.proportions[2]).toBeLessThan(0.05);
     expect(a.ci95[0]![0]).toBeLessThanOrEqual(a.proportions[0]!);
     expect(a.ci95[0]![1]).toBeGreaterThanOrEqual(a.proportions[0]!);
-    const p = componentAdmixture(panel, pure0, { replicates: 10 });
+    const p = componentAdmixture(panel, pure0);
     expect(p.proportions[0]).toBeGreaterThan(0.95);
   });
 
   it("keeps every estimate inside its own interval, including components at zero", () => {
     // A property real genomes once broke: bootstrap replicates that stopped short of convergence
-    // gave a British genome 99.9% European with an "interval" of 98.6-99.3%.
-    const p = componentAdmixture(panel, pure0, { replicates: 20 });
+    // gave a British genome 99.9% European with an "interval" of 98.6-99.3%. Profile intervals
+    // contain their estimate by construction; this keeps it that way.
+    const p = componentAdmixture(panel, pure0);
     p.proportions.forEach((x, k) => {
       expect(p.ci95[k]![0]).toBeLessThanOrEqual(x + 1e-3);
       expect(p.ci95[k]![1]).toBeGreaterThanOrEqual(x - 1e-3);
@@ -133,7 +134,7 @@ describe("ancestry analyses", () => {
     // Copy A is component 0 everywhere; copy B is component 0 on the first half of each chromosome, component 2 on the second.
     const kit = person(4, () => 0, (i) => ((i % PER_CHROM) < PER_CHROM / 2 ? 0 : 2));
     const g = panelGenotypes(kit, panel);
-    const q = componentAdmixture(panel, g, { replicates: 5 }).proportions;
+    const q = componentAdmixture(panel, g, { intervals: false }).proportions;
     const painting = paintChromosomes(panel, g, q, map, { windowSnps: 20 });
     let right = 0, total = 0;
     for (const c of painting.chromosomes) for (const w of c.windows) {

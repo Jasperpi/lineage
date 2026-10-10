@@ -1,7 +1,8 @@
 /** Messages between the page and the analysis worker, and the shapes of their results. */
 import type {
-  ComponentAdmixture, Painting, PopulationScore, RelationshipSpec, Report, SexInference, TraitCall,
+  AncestryTree, BuildCheck, ComponentAdmixture, Painting, PcaProjection, PopulationScore, RelationshipSpec, Report, SexInference, SimilarityResult, TraitCall,
 } from "@lineage/core";
+export type { PopulationScore };
 
 export interface KitOverview {
   slot: string;
@@ -26,11 +27,22 @@ export interface KitOverview {
 export interface AncestryResult {
   components: Array<{ id: string; label: string; populations: string[] }>;
   populations: string[];
-  coverage: { called: number; total: number; strandFlipped: number; alleleMismatch: number; notOnChip: number; noCall: number; perChromosome: number[] };
-  similarity: { snps: number; scores: PopulationScore[] };
+  coverage: { called: number; total: number; strandFlipped: number; alleleMismatch: number; notOnChip: number; noCall: number; conflicting: number; perChromosome: number[] };
+  /** The build the kit's positions matched: 37, 38 (read through the panel's GRCh38 positions) or "unknown". */
+  build: BuildCheck;
+  similarity: SimilarityResult;
+  /** Continental components. */
   admixture: ComponentAdmixture;
-  pca: { pcs: number[]; snpsUsed: number };
+  /** Regional components, when tiers for the person's continents were loaded. */
+  regional?: ComponentAdmixture;
+  /** Continents, shown regions and "Broadly" remainders, ready to display. */
+  tree: AncestryTree;
+  pca: PcaProjection;
   painting: Painting;
+  /** Whether a validation calibration was loaded, and when it was made. */
+  calibration: { loaded: boolean; generated?: string; windowZ?: number; conformalCoverage?: number; intervalCoverage?: number };
+  /** Tier files loaded for regional detail. */
+  tiers: string[];
   ms: number;
 }
 

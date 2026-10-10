@@ -11,7 +11,7 @@
  *   --ink / --ink-2 / --ink-3       text, secondary text, faded text
  *   --rule / --rule-2               hairlines
  *   --navy / --brick                the two strands of the Lineage mark
- *   --c-AFR ... --c-NAT             continental components, Okabe-Ito hues
+ *   --c-AFR ... --c-OCE             continental components, Okabe-Ito hues
  *                                   (distinct under the common colour-vision
  *                                   deficiencies); populations are shades of
  *                                   their continent's hue
@@ -41,6 +41,8 @@
   --c-SAS: #e69f00;
   --c-NAT: #cc79a7;
   --c-AMR: #cc79a7;
+  --c-MID: #3d9bd1;
+  --c-OCE: #8f7f00;
   --half: #1f3a93;
   --full: #b8574a;
   --land: #e4ddcc;
@@ -79,6 +81,8 @@
     --c-SAS: #f2b73d;
     --c-NAT: #e39ac2;
     --c-AMR: #e39ac2;
+    --c-MID: #7cc6f0;
+    --c-OCE: #e6d84a;
     --half: #7f9cf0;
     --full: #e58f80;
     --land: #2a2925;
@@ -93,7 +97,7 @@
   --ink: #f1eee6; --ink-2: #c4c1b6; --ink-3: #8f8c82; --rule: #34332e; --rule-2: #2a2926;
   --navy: #7f9cf0; --navy-2: #9db3f5; --brick: #e58f80; --gold: #d9ad54;
   --good: #5cc28a; --warn: #e5a54b; --bad: #f07a70;
-  --c-AFR: #f07f35; --c-EUR: #4ba6e8; --c-EAS: #2fc394; --c-SAS: #f2b73d; --c-NAT: #e39ac2; --c-AMR: #e39ac2;
+  --c-AFR: #f07f35; --c-EUR: #4ba6e8; --c-EAS: #2fc394; --c-SAS: #f2b73d; --c-NAT: #e39ac2; --c-AMR: #e39ac2; --c-MID: #7cc6f0; --c-OCE: #e6d84a;
   --half: #7f9cf0; --full: #e58f80; --land: #2a2925; --land-edge: #3a3833; --sea: #131311;
   --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px -12px rgba(0, 0, 0, .6);
 }

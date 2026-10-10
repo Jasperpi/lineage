@@ -12,7 +12,8 @@
  *
  *   q_k <- (1 / 2L) * sum_l [ g_l * q_k F_kl / p_l  +  (2 - g_l) * q_k (1 - F_kl) / (1 - p_l) ]
  *
- * which is monotone in the likelihood and converges to the MLE on the simplex.
+ * which is monotone in the likelihood and converges to the MLE on the simplex
+ * (the shared, SQUAREM-accelerated implementation in ancestry/analyse.ts).
  *
  * Honest limitations, surfaced in the result:
  *  - the answer is only as good as the reference panel: a person from a
@@ -21,7 +22,9 @@
  *  - the confidence intervals are block-bootstrap intervals over SNPs and
  *    reflect sampling noise only, not panel misspecification.
  */
-import type { Chrom } from "../genome.js";
+import { type Chrom, CHROMOSOMES } from "../genome.js";
+import { emFixedF } from "../ancestry/analyse.js";
+import { quantileSorted } from "../ancestry/calibration.js";
 import type { Kit } from "../kit/kit.js";
 import { complement } from "../util/alleles.js";
 import { mulberry32 } from "../util/random.js";
@@ -83,27 +86,11 @@ function extract(kit: Kit, panel: ReferencePanel): { obs: Obs[]; skipped: Admixt
   return { obs, skipped };
 }
 
-function em(obs: Obs[], K: number, maxIter = 500, tol = 1e-7): { q: number[]; ll: number; iterations: number } {
-  let q = new Array<number>(K).fill(1 / K);
-  let prevLl = -Infinity, ll = -Infinity, it = 0;
-  for (it = 0; it < maxIter; it++) {
-    const acc = new Array<number>(K).fill(0);
-    ll = 0;
-    for (const o of obs) {
-      let p = 0;
-      for (let k = 0; k < K; k++) p += q[k]! * o.f[k]!;
-      const gA = o.g, gB = 2 - o.g;
-      ll += gA * Math.log(p) + gB * Math.log(1 - p);
-      for (let k = 0; k < K; k++) {
-        acc[k]! += gA * (q[k]! * o.f[k]!) / p + gB * (q[k]! * (1 - o.f[k]!)) / (1 - p);
-      }
-    }
-    const total = 2 * obs.length;
-    q = acc.map((a) => a / total);
-    if (Math.abs(ll - prevLl) < tol) break;
-    prevLl = ll;
-  }
-  return { q, ll, iterations: it + 1 };
+/** Pack observations for the shared EM (ancestry/analyse.ts): dosages and SNP-major frequencies. */
+function pack(obs: Obs[], K: number): { dos: Int8Array; F: Float64Array } {
+  const dos = new Int8Array(obs.length), F = new Float64Array(obs.length * K);
+  obs.forEach((o, t) => { dos[t] = o.g; for (let k = 0; k < K; k++) F[t * K + k] = o.f[k]!; });
+  return { dos, F };
 }
 
 export interface AdmixtureOptions { bootstrapReplicates?: number; blockSize?: number; seed?: number; maxIterations?: number }
@@ -119,7 +106,9 @@ export function estimateAdmixture(kit: Kit, panel: ReferencePanel, opts: Admixtu
   if (obs.length === 0) {
     return { populations: panel.populations, proportions: new Array(K).fill(NaN), ci95: new Array(K).fill([NaN, NaN]), logLikelihood: NaN, snpsUsed: 0, snpsSkipped: skipped, iterations: 0, caveats };
   }
-  const main = em(obs, K, opts.maxIterations);
+  const { dos, F } = pack(obs, K);
+  const all = Array.from({ length: obs.length }, (_, t) => t);
+  const main = emFixedF(dos, F, K, all, opts.maxIterations ?? 3000, 1e-12, 1e-7);
 
   // Block bootstrap over SNP order (roughly genomic order, so blocks absorb residual LD).
   const reps = opts.bootstrapReplicates ?? 50;
@@ -128,26 +117,29 @@ export function estimateAdmixture(kit: Kit, panel: ReferencePanel, opts: Admixtu
   const nBlocks = Math.ceil(obs.length / block);
   const samples: number[][] = [];
   for (let r = 0; r < reps; r++) {
-    const boot: Obs[] = [];
+    const idx: number[] = [];
     for (let b = 0; b < nBlocks; b++) {
       const start = Math.floor(rng() * nBlocks) * block;
-      for (let i = start; i < Math.min(start + block, obs.length); i++) boot.push(obs[i]!);
+      for (let i = start; i < Math.min(start + block, obs.length); i++) idx.push(i);
     }
-    samples.push(em(boot, K, 200, 1e-5).q);
+    // Run each replicate to convergence from the full-data estimate (a replicate stopped early
+    // sits near its start and makes the interval too narrow).
+    samples.push(emFixedF(dos, F, K, idx, 1500, 1e-11, 1e-5, main.q.map((x) => Math.max(x, 1e-3))).q);
   }
   const ci95: Array<[number, number]> = [];
   for (let k = 0; k < K; k++) {
     const col = samples.map((s) => s[k]!).sort((a, b) => a - b);
-    const lo = col[Math.floor(0.025 * (col.length - 1))] ?? NaN;
-    const hi = col[Math.ceil(0.975 * (col.length - 1))] ?? NaN;
+    const lo = col.length ? quantileSorted(col, 0.025) : NaN;
+    const hi = col.length ? quantileSorted(col, 0.975) : NaN;
     ci95.push([lo, hi]);
   }
-  return { populations: panel.populations, proportions: main.q, ci95, logLikelihood: main.ll, snpsUsed: obs.length, snpsSkipped: skipped, iterations: main.iterations, caveats };
+  return { populations: panel.populations, proportions: main.q, ci95, logLikelihood: main.ll, snpsUsed: obs.length, snpsSkipped: skipped, iterations: main.it, caveats };
 }
 
 /** Thin a panel so consecutive SNPs on a chromosome are at least `minSpacing` bp apart (LD control). */
 export function thinPanel(panel: ReferencePanel, minSpacing = 100_000): ReferencePanel {
-  const sorted = [...panel.snps].sort((a, b) => a.chrom.localeCompare(b.chrom) || a.pos - b.pos);
+  const order = (c: Chrom) => { const i = CHROMOSOMES.indexOf(c); return i < 0 ? 99 : i; };
+  const sorted = [...panel.snps].sort((a, b) => order(a.chrom) - order(b.chrom) || a.pos - b.pos);
   const kept: PanelSnp[] = [];
   let lastChrom: Chrom | undefined, lastPos = -Infinity;
   for (const s of sorted) {
