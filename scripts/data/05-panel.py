@@ -63,7 +63,7 @@ COMP_CODE = np.array([3, 2, 1, 0], dtype=np.uint8)  # A<->T, C<->G
 FREQ_SCALE = 250
 N_PC = 6
 CORE_MAX = int(os.environ.get("CORE_MAX", 100_000))
-DENSE_MAX = int(os.environ.get("DENSE_MAX", 250_000))
+DENSE_MAX = int(os.environ.get("DENSE_MAX", 220_000))
 CORE_BUDGET = float(os.environ.get("CORE_BUDGET_MB", 4.5)) * 1e6
 PATH_BUDGET = float(os.environ.get("PATH_BUDGET_MB", 8.0)) * 1e6
 HOLDOUT_SEED = 20261009
