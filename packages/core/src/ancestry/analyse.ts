@@ -215,6 +215,8 @@ export interface ComponentAdmixtureOptions {
   referenceUncertainty?: boolean;
   /** Skip the intervals (for quick fits inside other analyses). */
   intervals?: boolean;
+  /** With `intervals: false`, still run the likelihood-ratio test at zero for every component. */
+  zeroTests?: boolean;
   /** Minimum held-out precision for a region to be shown (default 0.9). */
   minPrecision?: number;
   /**
@@ -504,12 +506,19 @@ export function componentAdmixture(panel: ReferencePanelData, g: PanelGenotypes,
   const ci95: Array<[number, number]> = [], lrZero: number[] = [];
   for (let k = 0; k < K; k++) {
     // A component with no support at all: interval from zero, no test needed beyond its upper end.
-    if (!wantIntervals) { ci95.push([qhat[k]!, qhat[k]!]); lrZero.push(NaN); continue; }
+    if (!wantIntervals) {
+      ci95.push([qhat[k]!, qhat[k]!]);
+      // Validation asks for the test at zero alone: one constrained fit, no interval search.
+      const mask = new Uint8Array(K);
+      mask[k] = 1;
+      lrZero.push(opts.zeroTests ? (qhat[k]! <= 1e-6 ? 0 : Math.max(0, (2 * (main.ll - profile(mask, 0, qhat).ll)) / phi)) : NaN);
+      continue;
+    }
     const r = interval([k]);
     ci95.push(r.ci); lrZero.push(r.lr0);
   }
   const presence = components.map((id) => cal?.components?.presence[id] ?? DEFAULT_PRESENCE);
-  const present = qhat.map((q, k) => q > presence[k]! && (!wantIntervals || lrZero[k]! > CHI2BAR_99));
+  const present = qhat.map((q, k) => q > presence[k]! && (Number.isNaN(lrZero[k]!) || lrZero[k]! > CHI2BAR_99));
   // Regions earn a line of their own; the rest of each continent is "Broadly" it.
   const minPrecision = opts.minPrecision ?? 0.9;
   const shown = qhat.map((q, k) => {

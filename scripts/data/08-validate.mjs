@@ -27,6 +27,7 @@
  * the fit levels 1% of genomes fall below. From the second half: everything
  * validation.json reports.
  *
+ *   node scripts/data/08-validate.mjs profiles --dir data/.cache/validation
  *   node scripts/data/08-validate.mjs run   --dir data/.cache/validation --shard 0/4
  *   node scripts/data/08-validate.mjs merge --dir data/.cache/validation --out data/reference
  *
@@ -37,7 +38,7 @@ import { gunzipSync } from "node:zlib";
 import { resolve, join } from "node:path";
 import {
   applyIsotonic, attachTier, componentAdmixture, componentColumns, conformalThreshold, decodePanelTier, decodeReferencePanel, fitIsotonic,
-  founderHaplotype, geneticMapFromCompact, meiosis, mosaicHaplotype, mulberry32, paintChromosomes, panelCm, populationSimilarity, quantileSorted,
+  founderHaplotype, geneticMapFromCompact, meiosis, mulberry32, paintChromosomes, panelCm, populationSimilarity, quantileSorted,
   similarityProbabilities, toGenotypes, trueProportions,
 } from "../../packages/core/dist/index.js";
 import { ROOT, REFERENCE, today } from "./lib.mjs";
@@ -80,31 +81,77 @@ function load() {
 /* run: one shard of test genomes                                      */
 /* ------------------------------------------------------------------ */
 
-function run() {
-  const [shard, shards] = (args.shard ?? "0/1").split("/").map(Number);
-  const { panel, tiers, map, held, hap } = load();
+/**
+ * What "the truth" is. A component is an average over several populations, so a genome
+ * from one of them is not 100% that component even in principle: a typical Tuscan fits
+ * as mostly European and partly Middle Eastern. Scoring it against 100% would call the
+ * model's definition an error. The truth for a genome is therefore its population's own
+ * typical profile (the mean estimate over that population's calibration-half genomes,
+ * `profiles` below), and for a mixture, the mixture of its donors' profiles by share of
+ * the genome. The profiles themselves are published, so the definition is visible.
+ */
+function setup() {
+  const L = load();
+  const { panel, tiers, map, held } = L;
   const cm = panelCm(panel, map);
   const conts = panel.header.components.map((c) => c.id);
-  // Label space: the regional columns with every tier attached.
   for (const t of tiers) attachTier(panel, t);
   const cols = componentColumns(panel, "region", 0.001).map((c) => ({ id: c.id, parent: c.parent }));
-  const R = cols.length;
-  const colOf = (h) => {
-    const r = cols.findIndex((c) => c.id === held.region[h]);
-    if (r >= 0) return { col: r, known: true };
-    const leaf = cols.findIndex((c) => c.id === held.continent[h]);
-    if (leaf >= 0) return { col: leaf, known: true };
-    return { col: cols.findIndex((c) => c.parent === held.continent[h]), known: false }; // a population in no region
-  };
-  const donors = Array.from({ length: R }, () => []);
+  panel.tiers = [];
+  const parentOf = Object.fromEntries(cols.map((c) => [c.id, c.parent]));
+  const pops = [...new Set(held.population.filter((_, h) => !held.admixed[h]))];
+  const popOf = held.population.map((p) => pops.indexOf(p));
+  const contOfPop = pops.map((p) => held.continent[held.population.indexOf(p)]);
+  const regionOfPop = pops.map((p) => held.region[held.population.indexOf(p)] || "");
+  const donorsByPop = pops.map((_, p) => popOf.map((x, h) => (x === p ? h : -1)).filter((h) => h >= 0));
+  // Regions (or leaf continents) a mixture can be drawn from: at least three held-out genomes.
+  const sourceIds = cols.map((c) => c.id).filter((id) => pops.some((_, p) => (regionOfPop[p] || contOfPop[p]) === id));
+  const donorsOf = (id) => pops.flatMap((_, p) => ((regionOfPop[p] || contOfPop[p]) === id ? donorsByPop[p] : []));
+  const usable = sourceIds.filter((id) => donorsOf(id).length >= 3);
   const singles = [];
-  for (let h = 0; h < held.genomes; h++) {
-    if (held.admixed[h]) continue;
-    const c = colOf(h);
-    singles.push({ h, ...c });
-    if (c.known) donors[c.col].push(h);
-  }
-  const usable = donors.map((d, r) => (d.length >= 3 ? r : -1)).filter((r) => r >= 0);
+  for (let h = 0; h < held.genomes; h++) if (!held.admixed[h]) singles.push({ h });
+  const tiersFor = (q) => tiers.filter((t) => q[conts.indexOf(t.header.continent)] >= 0.02);
+  return { ...L, cm, conts, cols, parentOf, pops, popOf, contOfPop, regionOfPop, donorsOf, usable, singles, tiersFor };
+}
+
+/** Typical profile of each population, from the calibration half of the held-out genomes, read in full. */
+function profiles() {
+  const S = setup();
+  const { panel, held, hap, conts, pops, popOf, singles, tiersFor } = S;
+  const sumC = pops.map(() => new Array(conts.length).fill(0)), sumR = pops.map(() => ({})), n = pops.map(() => 0);
+  singles.forEach((s, index) => {
+    if (index % 2 !== 0) return;
+    const g = toGenotypes(mulberry32(1), founderHaplotype(hap(s.h, 0), 0), founderHaplotype(hap(s.h, 1), 0), {}, panel);
+    panel.tiers = [];
+    const c = componentAdmixture(panel, g, { intervals: false });
+    panel.tiers = tiersFor(c.proportions);
+    const r = componentAdmixture(panel, g, { level: "region", intervals: false });
+    const p = popOf[s.h];
+    n[p]++;
+    c.proportions.forEach((x, k) => { sumC[p][k] += x; });
+    r.components.forEach((id, k) => { sumR[p][id] = (sumR[p][id] ?? 0) + r.proportions[k]; });
+  });
+  const out = { continents: conts, populations: {} };
+  pops.forEach((name, p) => {
+    if (!n[p]) return;
+    out.populations[name] = { genomes: n[p], continent: S.contOfPop[p], region: S.regionOfPop[p], c: sumC[p].map((x) => x / n[p]), r: Object.fromEntries(Object.entries(sumR[p]).map(([id, x]) => [id, x / n[p]])) };
+  });
+  writeFileSync(join(DIR, "profiles.json"), JSON.stringify(out));
+  process.stderr.write(`profiles for ${Object.keys(out.populations).length} populations\n`);
+}
+
+function run() {
+  const [shard, shards] = (args.shard ?? "0/1").split("/").map(Number);
+  const S = setup();
+  const { panel, tiers, map, held, hap, cm, conts, cols, parentOf, pops, popOf, contOfPop, regionOfPop, donorsOf, usable, singles, tiersFor } = S;
+  const prof = JSON.parse(readFileSync(join(DIR, "profiles.json"), "utf8")).populations;
+  const profC = (p) => prof[pops[p]]?.c ?? conts.map((c) => (c === contOfPop[p] ? 1 : 0));
+  const profR = (p) => prof[pops[p]]?.r ?? { [regionOfPop[p] || contOfPop[p]]: 1 };
+  /** A profile's share of a live regional column; NaN when the profile was fitted without the tier that splits it. */
+  const liveShare = (d, id) => {
+    if (parentOf[id] === id) return Object.entries(d).reduce((a, [k, x]) => a + (k === id || parentOf[k] === id ? x : 0), 0);
+    return (d[parentOf[id]] ?? 0) > 0.02 ? NaN : d[id] ?? 0;
+  };
   const chipMask = (bit) => Uint8Array.from(panel.chipMask ?? new Uint8Array(panel.header.nSnp).fill(3), (m) => (m >> bit) & 1);
   const CONDITIONS = [
     { id: "all", cond: {} },
@@ -117,30 +164,44 @@ function run() {
   const specs = singles.map((s) => ({ type: "single", ...s }));
   const rs = mulberry32(8);
   const pickFrom = (list) => list[Math.floor(rs() * list.length)];
-  const otherRegion = (a, sameContinent) => pickFrom(usable.filter((r) => r !== a && (cols[r].parent === cols[a].parent) === sameContinent)) ?? pickFrom(usable.filter((r) => r !== a));
+  const other = (a, sameContinent) => pickFrom(usable.filter((r) => r !== a && (parentOf[r] === parentOf[a]) === sameContinent)) ?? pickFrom(usable.filter((r) => r !== a));
   for (let i = 0; i < Math.round(160 * SCALE); i++) {
     const a = pickFrom(usable);
-    specs.push({ type: "pedigree", generations: 2 + (i % 3), a, b: otherRegion(a, rs() < 0.3), seed: 1000 + i });
+    specs.push({ type: "pedigree", generations: 2 + (i % 3), a, b: other(a, rs() < 0.3), seed: 1000 + i });
   }
   const MINOR = [0.01, 0.02, 0.05, 0.1, 0.2, 0.5];
   for (let i = 0; i < Math.round(220 * SCALE); i++) {
-    const a = pickFrom(usable), b = otherRegion(a, rs() < 0.25);
-    const q = new Array(R).fill(0);
+    const a = pickFrom(usable), b = other(a, rs() < 0.25);
+    const q = { [a]: 0, [b]: 0 };
     const minor = MINOR[i % MINOR.length];
-    if (i % 4 === 3) { const c = otherRegion(a, false); q[c] += minor / 2; q[b] += minor / 2; } else q[b] = minor;
+    if (i % 4 === 3) { const c = other(a, false); q[c] = (q[c] ?? 0) + minor / 2; q[b] += minor / 2; } else q[b] = minor;
     q[a] += 1 - minor;
     specs.push({ type: "old", generations: [5, 8, 12, 15][i % 4], q, seed: 5000 + i });
   }
-  // Leave one population out of the similarity reference: populations with at least six held-out genomes.
   const byPop = new Map();
   singles.forEach((s) => { const p = held.population[s.h]; byPop.set(p, [...(byPop.get(p) ?? []), s]); });
   const lopoPops = [...byPop.entries()].filter(([, v]) => v.length >= 6).map(([p]) => p).filter((_, i) => i % 3 === 0);
   for (const p of lopoPops) for (const s of byPop.get(p).slice(0, 6)) specs.push({ type: "lopo", ...s, drop: p });
 
+  // Haplotype labels are donor populations, so a genome's make-up by population is known exactly.
+  const founder = (h) => [founderHaplotype(hap(h, 0), popOf[h]), founderHaplotype(hap(h, 1), popOf[h])];
   const person = (rng, founders, level, idx) => {
-    if (level === 0) { const f = founders[idx]; return [founderHaplotype(hap(f.h, 0), f.col), founderHaplotype(hap(f.h, 1), f.col)]; }
+    if (level === 0) return founder(founders[idx]);
     const m = person(rng, founders, level - 1, idx * 2), f = person(rng, founders, level - 1, idx * 2 + 1);
     return [meiosis(rng, panel, cm, m[0], m[1]), meiosis(rng, panel, cm, f[0], f[1])];
+  };
+  /** One haplotype admixed `T` generations ago: tracts by source in proportions q, each from a fresh donor. */
+  const mosaic = (rng, q, T) => {
+    const ids = Object.keys(q), w = ids.map((id) => q[id]);
+    const n = panel.header.nSnp, alleles = new Uint8Array(n), labels = new Uint8Array(n);
+    const draw = () => { let u = rng(), k = 0; for (; k < ids.length - 1; k++) { u -= w[k]; if (u < 0) break; } const d = donorsOf(ids[k]); const h = d[Math.floor(rng() * d.length)]; return { a: hap(h, rng() < 0.5 ? 0 : 1), p: popOf[h] }; };
+    let cur = draw(), next = Infinity, chrom = -1;
+    for (let i = 0; i < n; i++) {
+      if (panel.chromIdx[i] !== chrom) { chrom = panel.chromIdx[i]; cur = draw(); next = cm[i] - (Math.log(1 - rng()) * 100) / T; }
+      while (cm[i] >= next) { cur = draw(); next -= (Math.log(1 - rng()) * 100) / T; }
+      alleles[i] = cur.a[i]; labels[i] = cur.p;
+    }
+    return { alleles, labels };
   };
   const tierOf = (c) => tiers.find((t) => t.header.continent === c);
   const lines = [];
@@ -148,43 +209,41 @@ function run() {
   specs.forEach((spec, index) => {
     if (index % shards !== shard) return;
     const rng = mulberry32(77 + index);
-    let h0, h1, regionKnown = true, truePop;
-    if (spec.type === "single" || spec.type === "lopo") {
-      h0 = founderHaplotype(hap(spec.h, 0), spec.col); h1 = founderHaplotype(hap(spec.h, 1), spec.col);
-      regionKnown = spec.known; truePop = held.population[spec.h];
-    } else if (spec.type === "pedigree") {
-      const n = 2 ** spec.generations;
+    let h0, h1;
+    if (spec.type === "single" || spec.type === "lopo") [h0, h1] = founder(spec.h);
+    else if (spec.type === "pedigree") {
       const r2 = mulberry32(spec.seed);
-      const founders = Array.from({ length: n }, (_, i) => { const col = i === 0 ? spec.b : spec.a; return { h: donors[col][Math.floor(r2() * donors[col].length)], col }; });
+      const n = 2 ** spec.generations;
+      const founders = Array.from({ length: n }, (_, i) => { const d = donorsOf(i === 0 ? spec.b : spec.a); return d[Math.floor(r2() * d.length)]; });
       [h0, h1] = person(r2, founders, spec.generations, 0);
     } else {
       const r2 = mulberry32(spec.seed);
-      const pools = donors.map((d) => d.flatMap((h) => [hap(h, 0), hap(h, 1)]));
-      h0 = mosaicHaplotype(r2, panel, cm, pools, spec.q, spec.generations); h1 = mosaicHaplotype(r2, panel, cm, pools, spec.q, spec.generations);
+      h0 = mosaic(r2, spec.q, spec.generations); h1 = mosaic(r2, spec.q, spec.generations);
     }
-    const condition = CONDITIONS[index % CONDITIONS.length];
+    // Calibration (even) and measurement (odd) halves see the same chip conditions.
+    const condition = CONDITIONS[(index >> 1) % CONDITIONS.length];
     const g = toGenotypes(rng, h0, h1, condition.cond, panel);
-    const truthR = trueProportions(h0, h1, R, cm, panel);
-    const truthC = conts.map((c) => cols.reduce((a, col, r) => a + (col.parent === c ? truthR[r] : 0), 0));
-    const rec = { index, type: spec.type, cond: condition.id, generations: spec.generations, called: g.called, truthC, regionKnown, pop: truePop };
+    const mix = trueProportions(h0, h1, pops.length, cm, panel);
+    const truthC = conts.map((_, k) => mix.reduce((a, m, p) => a + (m > 0 ? m * profC(p)[k] : 0), 0));
+    const rec = { index, type: spec.type, cond: condition.id, generations: spec.generations, called: g.called, truthC, pop: spec.type === "single" || spec.type === "lopo" ? held.population[spec.h] : undefined };
 
     if (spec.type === "lopo") {
-      // Similarity only, with the genome's own population taken out of its tier.
       const t = tierOf(held.continent[spec.h]);
       const j = t.header.populations.indexOf(spec.drop);
       const P = t.header.populations.length, keep = t.header.populations.map((_, k) => k).filter((k) => k !== j);
       const popFreq = new Uint8Array((t.popFreq.length / P) * keep.length);
       for (let k = 0; k < t.popFreq.length / P; k++) keep.forEach((src, d) => { popFreq[k * keep.length + d] = t.popFreq[k * P + src]; });
-      const cut = { ...t, popFreq, header: { ...t.header, populations: keep.map((k) => t.header.populations[k]), popAlleles: keep.map((k) => t.header.popAlleles[k]), popScale: keep.map((k) => t.header.popScale[k]) } };
-      panel.tiers = [cut];
-      rec.simFitZ = populationSimilarity(panel, g).fit.z;
+      panel.tiers = [{ ...t, popFreq, header: { ...t.header, populations: keep.map((k) => t.header.populations[k]), popAlleles: keep.map((k) => t.header.popAlleles[k]), popScale: keep.map((k) => t.header.popScale[k]) } }];
+      const withOut = populationSimilarity(panel, g);
+      panel.tiers = [t];
+      rec.simFitZ = withOut.fit.z; rec.simFitZOwn = populationSimilarity(panel, g).fit.z;
       lines.push(JSON.stringify(rec));
       return;
     }
 
     panel.tiers = [];
-    const cont = componentAdmixture(panel, g, { truth: truthC });
-    rec.q = cont.proportions; rec.lrTruth = cont.lrTruth; rec.lrZero = cont.lrZero.map((x) => (Number.isFinite(x) ? x : 1e9)); rec.ci = cont.ci95;
+    const cont = componentAdmixture(panel, g, { truth: truthC, intervals: false, zeroTests: true });
+    rec.q = cont.proportions; rec.lrTruth = cont.lrTruth; rec.lrZero = cont.lrZero;
     const paint = paintChromosomes(panel, g, cont.proportions, map);
     const hist = new Array(POST_BINS * 2).fill(0), zh = new Array(Z_BINS).fill(0);
     let at = 0;
@@ -195,35 +254,28 @@ function run() {
       for (const w of ch.windows) {
         const mid = (w.start + w.end) / 2;
         while (i + 1 < panel.header.nSnp && panel.chromIdx[i + 1] === c && panel.pos[i + 1] <= mid) i++;
-        const a = conts.indexOf(cols[h0.labels[i]].parent), b = conts.indexOf(cols[h1.labels[i]].parent);
+        const a = conts.indexOf(contOfPop[h0.labels[i]]), b = conts.indexOf(contOfPop[h1.labels[i]]);
         const ok = (w.pair[0] === Math.min(a, b) && w.pair[1] === Math.max(a, b)) ? 1 : 0;
         hist[postBin(w.rawPosterior) * 2 + ok]++;
         zh[Math.max(0, Math.min(Z_BINS - 1, Math.floor((w.fitZ - Z_LO) / Z_STEP)))]++;
       }
     }
-    rec.paint = { hist, zh, z: paint.fit.z, generations: paint.settings.generations, totals: paint.totals };
+    rec.paint = { hist, zh, z: paint.fit.z, generations: paint.settings.generations };
 
     // Regional fit and similarity with the tiers the app would load: continents at 2% or more.
-    panel.tiers = tiers.filter((t) => cont.proportions[conts.indexOf(t.header.continent)] >= 0.02);
+    panel.tiers = tiersFor(cont.proportions);
     const live = componentColumns(panel, "region", 0.001).map((c) => c.id);
-    const reg = componentAdmixture(panel, g, { level: "region", truth: live.map((id) => truthRegionOf(id, cols, truthR, truthC, conts)) });
-    rec.reg = { ids: live, q: reg.proportions, lrTruth: reg.lrTruth, lrZero: reg.lrZero.map((x) => (Number.isFinite(x) ? x : 1e9)), truth: live.map((id) => truthRegionOf(id, cols, truthR, truthC, conts)) };
+    const truthLive = live.map((id) => mix.reduce((a, m, p) => a + (m > 0.02 ? m * liveShare(profR(p), id) : 0), 0) / Math.max(1e-9, mix.reduce((a, m) => a + (m > 0.02 ? m : 0), 0)));
+    const reg = componentAdmixture(panel, g, { level: "region", truth: truthLive.map((t) => (Number.isFinite(t) ? t : 0)), intervals: false, zeroTests: true });
+    rec.reg = { ids: live, q: reg.proportions, lrTruth: reg.lrTruth.map((x, k) => (Number.isFinite(truthLive[k]) ? x : null)), lrZero: reg.lrZero, truth: truthLive.map((t) => (Number.isFinite(t) ? t : null)) };
     const sim = populationSimilarity(panel, g);
-    const best = Math.max(...sim.scores.map((s) => s.logLik));
-    rec.sim = { pops: sim.scores.map((s) => s.population), d: sim.scores.map((s) => Math.round((best - s.logLik) * 10) / 10), fitZ: sim.fit.z };
+    const best = Math.max(...sim.scores.map((x) => x.logLik));
+    rec.sim = { pops: sim.scores.map((x) => x.population), d: sim.scores.map((x) => Math.round((best - x.logLik) * 10) / 10), fitZ: sim.fit.z };
     lines.push(JSON.stringify(rec));
     if (lines.length % 20 === 0) process.stderr.write(`shard ${shard}: ${lines.length} genomes, ${Math.round((Date.now() - t0) / 1000)} s\n`);
   });
   writeFileSync(join(DIR, `validate.${shard}.jsonl`), lines.join("\n") + "\n");
   process.stderr.write(`shard ${shard}/${shards}: ${lines.length} of ${specs.length} genomes in ${Math.round((Date.now() - t0) / 1000)} s\n`);
-}
-
-/** True share of a live regional column: a region's own share, or the whole continent's when its tier is not loaded. */
-function truthRegionOf(id, cols, truthR, truthC, conts) {
-  const r = cols.findIndex((c) => c.id === id);
-  const isLoadedRegion = r >= 0 && cols[r].parent !== id;
-  if (isLoadedRegion) return truthR[r];
-  return truthC[conts.indexOf(id)];
 }
 
 /* ------------------------------------------------------------------ */
@@ -267,18 +319,21 @@ function merge() {
     coverage: r4(share(simEval, (x) => x.covered)), meanSetSize: r4(mean(simEval.map((x) => x.setSize))),
     top1: r4(share(simEval, (x) => x.rank === 1)), top3: r4(share(simEval, (x) => x.rank <= 3)),
     fit: { z01: r4(fitZ01), falseAlarm: r4(share(simOf(ev), (r) => r.sim.fitZ < fitZ01)), flaggedWhenPopulationRemoved: r4(share(lopo, (r) => r.simFitZ < fitZ01)), removedGenomes: lopo.length,
+           medianZ: { ownPopulationPresent: r4(q(lopo.map((r) => r.simFitZOwn), 0.5)), ownPopulationRemoved: r4(q(lopo.map((r) => r.simFitZ), 0.5)) },
            flaggedWhenAdmixed: r4(share(fitted(ev).filter((r) => r.type !== "single"), (r) => r.sim.fitZ < fitZ01)) },
   };
 
   /* ---- components ---- */
-  const BINS = [[0, 0, "absent"], [1e-9, 0.02, "under 2%"], [0.02, 0.1, "2-10%"], [0.1, 0.5, "10-50%"], [0.5, 1.0001, "over 50%"]];
-  const inBin = (t, [lo, hi]) => (lo === 0 && hi === 0 ? t <= 1e-9 : t > Math.max(lo, 1e-9) - 1e-12 && t < hi);
+  // "Absent" is a true share of half a percent or less (profiles are estimates, so never exactly zero).
+  const ABSENT = 0.005;
+  const BINS = [[0, ABSENT, "absent"], [ABSENT, 0.02, "under 2%"], [0.02, 0.1, "2-10%"], [0.1, 0.5, "10-50%"], [0.5, 1.0001, "over 50%"]];
+  const inBin = (t, [lo, hi]) => (lo === 0 ? t <= hi : t > lo && t <= hi);
   const level = (pick) => {
-    const rows = (rs) => fitted(rs).flatMap((r) => { const x = pick(r); return x ? x.ids.map((id, k) => ({ id, t: x.truth[k], est: x.q[k], lr: x.lrTruth[k], lr0: x.lrZero[k], type: r.type, cond: r.cond })) : []; });
+    const rows = (rs) => fitted(rs).flatMap((r) => { const x = pick(r); return x ? x.ids.map((id, k) => ({ id, t: x.truth[k], est: x.q[k], lr: x.lrTruth[k], lr0: x.lrZero[k], type: r.type, cond: r.cond })).filter((y) => y.t !== null && y.lr !== null) : []; });
     const c = rows(cal), e = rows(ev);
     const phi = Math.max(1, q(c.map((x) => x.lr), 0.95) / CHI2_95);
     const ids = [...new Set(c.map((x) => x.id))];
-    const presence = Object.fromEntries(ids.map((id) => [id, r4(Math.max(0.005, q(c.filter((x) => x.id === id && x.t <= 1e-9).map((x) => x.est), 0.99) || 0.005))]));
+    const presence = Object.fromEntries(ids.map((id) => [id, r4(Math.max(0.005, q(c.filter((x) => x.id === id && x.t <= ABSENT).map((x) => x.est), 0.99) || 0.005))]));
     const called = (x) => x.est > (presence[x.id] ?? 0.01) && x.lr0 / phi > CHI2BAR_99;
     const PB = [0.05, 0.1, 0.25, 0.5, 1];
     const byId = Object.fromEntries(ids.map((id) => [id, PB.map((hi, b) => {
@@ -292,15 +347,15 @@ function merge() {
         estimates: e.length, phi: r4(phi),
         coverage: r4(share(e, (x) => x.lr <= CHI2_95 * phi)),
         coverageByShare: BINS.map((b) => { const s = e.filter((x) => inBin(x.t, b)); return { share: b[2], n: s.length, coverage: r4(share(s, (x) => x.lr <= CHI2_95 * phi)), meanAbsError: r4(mean(s.map((x) => Math.abs(x.est - x.t)))), bias: r4(mean(s.map((x) => x.est - x.t))) }; }),
-        falsePresent: r4(share(e.filter((x) => x.t <= 1e-9), called)),
+        falsePresent: r4(share(e.filter((x) => x.t <= ABSENT), called)),
         foundWhenPresent: BINS.slice(1).map((b) => { const s = e.filter((x) => inBin(x.t, b)); return { share: b[2], n: s.length, found: r4(share(s, called)) }; }),
-        byCondition: Object.fromEntries([...new Set(e.map((x) => x.cond))].map((cd) => [cd, r4(mean(e.filter((x) => x.cond === cd && x.t > 1e-9).map((x) => Math.abs(x.est - x.t))))])),
+        byCondition: Object.fromEntries([...new Set(e.map((x) => x.cond))].map((cd) => [cd, r4(mean(e.filter((x) => x.cond === cd && x.t > ABSENT).map((x) => Math.abs(x.est - x.t))))])),
         precisionById: Object.fromEntries(ids.map((id) => { const calls = e.filter((x) => x.id === id && called(x)); return [id, { calls: calls.length, precision: r4(share(calls, (x) => x.t >= 0.5 * x.est)), recall: r4(share(e.filter((x) => x.id === id && x.t >= 0.1), called)) }]; })),
       },
     };
   };
   const contLevel = level((r) => (r.q ? { ids: conts, truth: r.truthC, q: r.q, lrTruth: r.lrTruth, lrZero: r.lrZero } : undefined));
-  const regLevel = level((r) => (r.reg && r.regionKnown ? r.reg : undefined));
+  const regLevel = level((r) => r.reg);
 
   /* ---- painting ---- */
   const sumHist = (rs, key, n) => fitted(rs).reduce((a, r) => { r.paint[key].forEach((v, i) => { a[i] += v; }); return a; }, new Array(n).fill(0));
@@ -350,6 +405,8 @@ function merge() {
     caveat: "Test genomes come from the same studies as the reference (HGDP and 1000 Genomes), so real files from other sources may do a little worse. Populations with fewer than ten genomes have no held-out genomes and are untested. The Ashkenazi reference has no genomes to hold out; it is tested only for false calls here.",
     panel: { id: meta.id, genomesFitted: meta.qc.genomes, heldOut: meta.holdout?.genomes, dense: meta.qc.dense, core: meta.qc.core },
     genomes: { calibration: cal.length, measured: ev.length, single: count("single"), pedigree: count("pedigree"), old: count("old"), populationRemoved: lopo.length },
+    truth: "A genome's true shares are its population's typical profile (the mean estimate over that population's calibration-half genomes, in `profiles`), and for a mixture the mixture of its donors' profiles. A component is an average over several populations, so a genome from one of them is not 100% that component even in principle.",
+    profiles: Object.fromEntries(Object.entries(JSON.parse(readFileSync(join(DIR, "profiles.json"), "utf8")).populations).map(([p, v]) => [p, { genomes: v.genomes, continents: v.c.map(r4), regions: Object.fromEntries(Object.entries(v.r).filter(([, x]) => x >= 0.02).map(([id, x]) => [id, r4(x)])) }])),
     similarity, components: contLevel.report, regions: regLevel.report, painting,
     thresholds: { cautious: 0.95, standard: 0.8, complete: 0.5 },
   };
@@ -360,7 +417,8 @@ function merge() {
   console.log(JSON.stringify({ similarity: { coverage: similarity.coverage, top1: similarity.top1, setSize: similarity.meanSetSize, T: similarity.temperature, fit: similarity.fit }, continents: { phi: contLevel.phi, coverage: contLevel.report.coverage, falsePresent: contLevel.report.falsePresent, byShare: contLevel.report.coverageByShare }, regions: { phi: regLevel.phi, coverage: regLevel.report.coverage, falsePresent: regLevel.report.falsePresent }, painting: { byThreshold, ece: painting.expectedCalibrationError, fit: painting.fit } }, null, 1));
 }
 
-if (mode === "run") run();
+if (mode === "profiles") profiles();
+else if (mode === "run") run();
 else if (mode === "merge") merge();
 else { console.error("usage: 08-validate.mjs run|merge --dir <validation build> [--shard i/n] [--out dir]"); process.exit(1); }
 void existsSync;

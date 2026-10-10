@@ -132,10 +132,15 @@ jobs:
         run: python scripts/data/05-panel.py --stage build --holdout
       - name: Validate and calibrate on the held-out genomes
         run: |
+          node scripts/data/08-validate.mjs profiles --dir cache/validation
           for s in 0 1 2 3; do node --max-old-space-size=3500 scripts/data/08-validate.mjs run --dir cache/validation --shard $s/4 & done
           wait
           mkdir -p out && cp cache/populations.json out/
           node scripts/data/08-validate.mjs merge --dir cache/validation --out out
+      # Kept so the harness can be rerun on the same held-out build without the earlier stages.
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: validation-build, path: cache/validation }
       - name: The panel that ships (every genome)
         run: python scripts/data/05-panel.py --stage build --out out
       - name: Checksums
