@@ -18,7 +18,8 @@ permissions:
   contents: write
 
 env:
-  LINEAGE_CACHE: ${{ github.workspace }}/data/.cache
+  # Not a hidden folder: upload-artifact leaves hidden paths out of wildcard matches.
+  LINEAGE_CACHE: ${{ github.workspace }}/cache
 
 jobs:
   prepare:
@@ -41,12 +42,12 @@ jobs:
         with:
           name: prepare
           path: |
-            data/.cache/chip-snps.tsv
-            data/.cache/chip-snps.json
-            data/.cache/chip-snps.b38.tsv
-            data/.cache/chip-snps.b38.json
-            data/.cache/samples.tsv
-            data/.cache/populations.json
+            cache/chip-snps.tsv
+            cache/chip-snps.json
+            cache/chip-snps.b38.tsv
+            cache/chip-snps.b38.json
+            cache/samples.tsv
+            cache/populations.json
 
   extract:
     needs: prepare
@@ -61,14 +62,15 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install numpy pysam
       - uses: actions/download-artifact@v4
-        with: { name: prepare, path: data/.cache }
+        with: { name: prepare, path: cache }
       - name: Phased genotypes at the chip SNPs
         run: python scripts/data/03-hgdp1kg.py --chrom ${{ matrix.chrom }}
       - uses: actions/upload-artifact@v4
         with:
           name: hgdp1kg-${{ matrix.chrom }}
-          path: data/.cache/hgdp1kg.chr${{ matrix.chrom }}.*
+          path: cache/hgdp1kg.chr${{ matrix.chrom }}.*
           compression-level: 0
+          if-no-files-found: error
 
   select:
     needs: extract
@@ -79,16 +81,16 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install numpy
       - uses: actions/download-artifact@v4
-        with: { merge-multiple: true, path: data/.cache }
+        with: { merge-multiple: true, path: cache }
       - name: Choose the dense and core SNPs (without the held-out genomes)
         run: python scripts/data/05-panel.py --stage select
       - uses: actions/upload-artifact@v4
         with:
           name: selection
           path: |
-            data/.cache/selection.npz
-            data/.cache/selection.json
-            data/.cache/core.b38.tsv
+            cache/selection.npz
+            cache/selection.json
+            cache/core.b38.tsv
 
   ashkenazi:
     needs: select
@@ -103,13 +105,14 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install pysam
       - uses: actions/download-artifact@v4
-        with: { merge-multiple: true, pattern: "{selection,prepare}", path: data/.cache }
+        with: { merge-multiple: true, pattern: "{selection,prepare}", path: cache }
       - name: gnomAD Ashkenazi allele counts at the core SNPs
         run: python scripts/data/03b-gnomad-asj.py --chrom ${{ matrix.chrom }} --jobs 16
       - uses: actions/upload-artifact@v4
         with:
           name: asj-${{ matrix.chrom }}
-          path: data/.cache/asj.chr${{ matrix.chrom }}.*
+          path: cache/asj.chr${{ matrix.chrom }}.*
+          if-no-files-found: error
 
   build:
     needs: ashkenazi
@@ -123,21 +126,21 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install numpy
       - uses: actions/download-artifact@v4
-        with: { merge-multiple: true, path: data/.cache }
+        with: { merge-multiple: true, path: cache }
       - run: npm ci && npm run build --workspace=packages/core
       - name: Validation build (a fifth of each population held out)
         run: python scripts/data/05-panel.py --stage build --holdout
       - name: Validate and calibrate on the held-out genomes
         run: |
-          for s in 0 1 2 3; do node --max-old-space-size=3500 scripts/data/08-validate.mjs run --dir data/.cache/validation --shard $s/4 & done
+          for s in 0 1 2 3; do node --max-old-space-size=3500 scripts/data/08-validate.mjs run --dir cache/validation --shard $s/4 & done
           wait
-          mkdir -p out && cp data/.cache/populations.json out/
-          node scripts/data/08-validate.mjs merge --dir data/.cache/validation --out out
+          mkdir -p out && cp cache/populations.json out/
+          node scripts/data/08-validate.mjs merge --dir cache/validation --out out
       - name: The panel that ships (every genome)
         run: python scripts/data/05-panel.py --stage build --out out
       - name: Checksums
         run: |
-          cp data/.cache/validation/panel.json out/validation-build.panel.json
+          cp cache/validation/panel.json out/validation-build.panel.json
           cd out && sha256sum * > SHA256SUMS && cat SHA256SUMS && du -sh .
       - uses: actions/upload-artifact@v4
         with: { name: reference-data, path: out }
