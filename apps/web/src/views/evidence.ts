@@ -19,7 +19,7 @@ export function evidence(): HTMLElement {
       h("p", { class: "kicker" }, "Evidence"),
       h("h1", { class: "h1" }, "What we know, ", h("em", {}, "and how we know it")),
       h("p", { class: "lede" }, "Every dataset Lineage uses, where it came from and on what terms; how well each method does where the right answer is known; and every result for your file as a numbered fact with its evidence.")));
-  const body = h("div", { class: "stack-l" }, privacy());
+  const body = h("div", { class: "stack-l" }, privacy(), thisBuild());
   root.append(body);
   Promise.all([dataRoom(), validation()]).then(([room, val]) => {
     body.append(room, val, methods(), factsRegister(), notDoing());
@@ -45,7 +45,57 @@ function privacy(): HTMLElement {
         h("p", { class: "small muted" }, "Lineage is served with this Content-Security-Policy header, which browsers enforce:"),
         h("pre", { class: "mono small", style: "white-space:pre-wrap;background:var(--paper-2);padding:12px;border-radius:10px" }, "default-src 'self'; connect-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self' https://jaspermeller.com https://*.jaspermeller.com"),
         h("p", { class: "small muted", style: "margin:0" }, "To check: open your browser's developer tools on the Network tab and load a file; no request carries it. Or let the page load its reference files (they appear in the table above), switch off your network, and keep working. Or read the code that does all of this: ", h("a", { href: "https://github.com/Jasperpi/lineage", target: "_blank", rel: "noopener" }, "github.com/Jasperpi/lineage"), "."))),
-    h("div", { class: "fig-foot" }, "No accounts, cookies, analytics or third-party scripts. The only thing stored on this device is your light or dark preference."));
+    h("div", { class: "fig-foot" }, "No accounts, cookies, analytics or third-party scripts. This device stores only your light or dark preference and a copy of the app and its reference data for offline use; never your files or results."));
+}
+
+/* ------------------------------------------------------------------ */
+const hex = async (b: BufferSource) => [...new Uint8Array(await crypto.subtle.digest("SHA-256", b))].map((x) => x.toString(16).padStart(2, "0")).join("");
+
+/** The build hash, whether this copy is kept for offline use, and a check of the running files against SHA256SUMS. */
+function thisBuild(): HTMLElement {
+  const hash = h("span", {}, "…");
+  const offline = h("span", {}, "…");
+  const result = h("p", { class: "small", style: "margin:0" });
+  const check = h("button", { class: "btn ghost", type: "button" }, "Check the files this page runs");
+  let sums: Array<{ sha: string; path: string }> = [];
+  fetch(new URL("SHA256SUMS", document.baseURI)).then(async (r) => {
+    if (!r.ok) throw new Error();
+    const text = await r.text();
+    sums = text.trim().split("\n").map((l) => ({ sha: l.slice(0, 64), path: l.slice(66) }));
+    hash.textContent = await hex(new TextEncoder().encode(text));
+  }).catch(() => { hash.textContent = "not published by this server (a development build)"; check.disabled = true; });
+  const sw = "serviceWorker" in navigator ? navigator.serviceWorker : null;
+  const showOffline = () => { offline.textContent = sw?.controller ? "Yes: this build is stored on this device, and reference data is kept as each view first loads it." : "Not yet: it is stored the first time the page loads with a service worker allowed."; };
+  showOffline();
+  sw?.addEventListener("controllerchange", showOffline);
+  check.addEventListener("click", async () => {
+    check.disabled = true;
+    // Reference data is checked only once it has been loaded, so the check never downloads it.
+    const loaded = new Set(ledger().entries.map((e) => { try { return new URL(e.url).pathname; } catch { return ""; } }));
+    const todo = sums.filter((f) => !f.path.startsWith("data/") || loaded.has(new URL(f.path, document.baseURI).pathname));
+    const bad: string[] = [];
+    for (const f of todo) {
+      try {
+        const r = await fetch(new URL(f.path, document.baseURI));
+        if (!r.ok || await hex(await r.arrayBuffer()) !== f.sha) bad.push(f.path);
+      } catch { bad.push(f.path); }
+    }
+    result.textContent = bad.length ? `${bad.length} of ${todo.length} files differ from SHA256SUMS: ${bad.join(", ")}` : `All ${todo.length} files checked match SHA256SUMS${todo.length < sums.length ? ` (${sums.length - todo.length === 1 ? "the other is a reference file" : `the other ${sums.length - todo.length} are reference files`} this page has not loaded yet)` : ""}.`;
+    result.style.color = bad.length ? "var(--bad)" : "";
+    check.disabled = false;
+  });
+  return h("section", { class: "figure", id: "build" },
+    h("div", { class: "fig-head" },
+      h("p", { class: "kicker" }, "This build"),
+      h("h3", {}, "The code you are running, by its hash"),
+      h("p", {}, "Every file the site serves is listed with its SHA-256 in SHA256SUMS, and the build hash is the SHA-256 of that list. Building the public source gives the same files, so the hash says which code this is.")),
+    h("div", { class: "fig-body stack dataset" },
+      h("dl", {}, h("dt", {}, "Build hash"), h("dd", { class: "mono" }, hash), h("dt", {}, "Works offline"), h("dd", {}, offline)),
+      h("div", {}, check), result,
+      h("details", { class: "more" }, h("summary", {}, "Check it yourself, without trusting this page"),
+        h("p", { class: "small muted" }, "A page cannot vouch for itself, so the real check runs on your own machine: build the source and compare it with what this site serves."),
+        h("pre", { class: "mono small", style: "white-space:pre-wrap;background:var(--paper-2);padding:12px;border-radius:10px" }, `git clone https://github.com/Jasperpi/lineage && cd lineage\nnpm ci && npm run build --workspace=apps/web\nnode scripts/verify-build.mjs ${location.origin}${location.pathname}`))),
+    h("div", { class: "fig-foot" }, "With the page stored, it keeps running the build it installed until every tab of it is closed, so a new deploy cannot change it mid-session."));
 }
 
 /* ------------------------------------------------------------------ */

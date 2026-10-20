@@ -47,8 +47,12 @@ npm test                      # 75 tests: parsers, relationships by simulation, 
 # Web app (http://localhost:5173); the reference data in data/reference is served at /data/
 npm run web
 
-# Release smoke test: real CSP headers, every page at 1440 and 390 px, fails on any third-party request
+# Release smoke test: real CSP headers, every page at 1440 and 390 px, fails on any third-party request,
+# then stops the server and checks every page still loads and analyses offline
 npm run build --workspace=apps/web && node scripts/smoke.mjs
+
+# Check a deployed site serves exactly the files of your local build (dist/SHA256SUMS)
+node scripts/verify-build.mjs https://lineage.jaspermeller.com/
 
 # Command line, on the synthetic samples
 node packages/cli/dist/index.js inspect  data/samples/tester.txt
@@ -65,7 +69,7 @@ See [`scripts/data/README.md`](scripts/data/README.md). In short: eight scripts 
 
 ## Deploying the web app
 
-Lineage deploys as its own Vercel project, `web`, whose Root Directory is `lineage/apps/web`; `apps/web/vercel.json` installs the workspace from the repo root, builds the core packages and the site, and sets the headers, including the Content-Security-Policy (`default-src 'self'; connect-src 'self'`) that stops the page from contacting any other origin. Its address is `lineage.jaspermeller.com`; the portfolio redirects `/lineage` there and frames it on its laptop and phone.
+Lineage deploys as its own Vercel project, `web`, whose Root Directory is `lineage/apps/web`; `apps/web/vercel.json` installs the workspace from the repo root, builds the core packages and the site, and sets the headers, including the Content-Security-Policy (`default-src 'self'; connect-src 'self'`) that stops the page from contacting any other origin. Each build writes `dist/SHA256SUMS` (every served file's SHA-256, in `sha256sum -c` format) and `dist/sw.js`, a service worker that keeps that exact build on the device so the app works offline; the build hash is the SHA-256 of `SHA256SUMS`, shown on the Evidence page. The build is deterministic, so anyone can rebuild the source and compare with `scripts/verify-build.mjs`. Its address is `lineage.jaspermeller.com`; the portfolio redirects `/lineage` there and frames it on its laptop and phone.
 
 ## Library use
 

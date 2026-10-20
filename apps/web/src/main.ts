@@ -5,7 +5,7 @@ import "@fontsource/ibm-plex-mono/latin-400.css";
 import "@fontsource/ibm-plex-mono/latin-500.css";
 import "./styles/app.css";
 import { state, subscribe, type State } from "./lib/store.js";
-import { startLedger } from "./lib/ledger.js";
+import { ledger, onLedger, startLedger } from "./lib/ledger.js";
 import { ready } from "./lib/engine.js";
 import { shell, restoreTheme } from "./views/shell.js";
 import { home } from "./views/home.js";
@@ -18,6 +18,17 @@ import { evidence } from "./views/evidence.js";
 
 restoreTheme();
 startLedger();
+
+// Keep this build on the device so it works offline (sw.js; the production build only).
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  const sw = navigator.serviceWorker;
+  sw.register("./sw.js").catch(() => { /* framed or storage blocked: online use only */ });
+  // Reference data fetched before the worker took control (or by an analysis worker started
+  // before it) bypassed it; name it so the worker keeps a copy too.
+  const keep = () => sw.controller?.postMessage({ keep: ledger().entries.filter((e) => e.sameOrigin && new URL(e.url).pathname.includes("/data/")).map((e) => e.url) });
+  sw.addEventListener("controllerchange", keep);
+  onLedger(keep);
+}
 
 /** Each route and the pieces of state that should redraw it. */
 const ROUTES: Record<string, { view: () => HTMLElement; deps: Array<keyof State>; title: string }> = {
